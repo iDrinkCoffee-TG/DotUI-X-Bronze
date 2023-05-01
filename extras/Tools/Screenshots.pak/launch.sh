@@ -11,4 +11,3 @@ else
     say "Disabled screenshots"
 	sleep 1
 fi
-

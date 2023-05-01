@@ -1,11 +1,16 @@
 #!/bin/sh
 
+PERF_LEVEL=performance
+
+###############################
+
 DIR="$(dirname "$0")"
 HOME="$USERDATA_PATH"
 
 cd "$DIR"
 if [ -f Doukutsu.exe ] && [ -d data ]; then
 	cd "$HOME"
+	echo "$PERF_LEVEL" > "$CPU_PATH"
 	picoarch "$DIR/nxengine_libretro.so" "$DIR/Doukutsu.exe"
 else
 	show "okay.png"

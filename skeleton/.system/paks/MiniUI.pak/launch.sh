@@ -87,14 +87,13 @@ export MIYOO_VERSION=${MIYOO_VERSION#miyoo_version=}
 ls /customer/app > "$USERDATA_PATH/.miniui/app_contents.txt"
 /customer/app/axp_test > "$USERDATA_PATH/.miniui/axp_result.txt"
 
-CPU_PATH=/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+export CPU_PATH=/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 while [ -f "$EXEC_PATH" ]; do
 	echo ondemand > "$CPU_PATH"
 
 	./MiniUI &> "$LOGS_PATH/MiniUI.txt"
-	
+
 	echo `date +'%F %T'` > "$DATETIME_PATH"
-	echo performance > "$CPU_PATH"
 	sync
 
 	NEXT="/tmp/next"
@@ -106,7 +105,7 @@ while [ -f "$EXEC_PATH" ]; do
 			swapoff $USERDATA_PATH/swapfile
 			rm -f "/tmp/using-swap"
 		fi
-		
+
 		echo `date +'%F %T'` > "$DATETIME_PATH"
 		sync
 	fi

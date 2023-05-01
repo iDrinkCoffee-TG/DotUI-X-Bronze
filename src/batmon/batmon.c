@@ -9,9 +9,8 @@
 #include <linux/input.h>
 #include <pthread.h>
 
-static int is_charging = 1;
-static int screen_on = 0;
-static unsigned long screen_start;
+static volatile int screen_on = 0;
+static volatile unsigned long screen_start;
 void screenOn(void) {
 	screen_start = SDL_GetTicks();
 	if (!screen_on) system("echo 100 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle");
@@ -21,6 +20,8 @@ void screenOff(void) {
 	system("echo 0 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle");
 	screen_on = 0;
 }
+
+static volatile int is_charging = 1;
 void checkCharging(void) {
 	// Code adapted from OnionOS
 	char *cmd = "cd /customer/app/ ; ./axp_test";  
@@ -44,9 +45,9 @@ void* chargingThread(void* arg) {
 	}
 }
 
-static int launch = 0;
 static int input_fd;
 static pthread_t input_pt;
+static volatile int launch = 0;
 void* inputThread(void* arg) {
 	struct input_event	event;
 	while (read(input_fd, &event, sizeof(event))==sizeof(event)) {
@@ -62,13 +63,13 @@ int main(void) {
 	ioctl(fb0_fd, FBIOGET_VSCREENINFO, &vinfo);
 	int map_size = vinfo.xres * vinfo.yres * (vinfo.bits_per_pixel / 8); // 640x480x4
 	char* fb0_map = (char*)mmap(0, map_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb0_fd, 0);
-	
+
 	memset(fb0_map, 0, map_size); // clear screen
-	
+
 	char charging_path[128];
 	sprintf(charging_path, "%s/charging.png", getenv("RES_PATH"));
 	SDL_Surface* img = IMG_Load(charging_path); // 24-bit opaque png
-	
+
 	uint8_t* dst = (uint8_t*)fb0_map; // rgba
 	uint8_t* src = (uint8_t*)img->pixels; // bgr
 	src += ((img->h * img->w) - 1) * 3;
@@ -83,33 +84,37 @@ int main(void) {
 		}
 	}
 	SDL_FreeSurface(img);
-	
+
 	screenOn();
-	
+
 	input_fd = open("/dev/input/event0", O_RDONLY);
 	pthread_create(&input_pt, NULL, &inputThread, NULL);
-	
+
 	pthread_create(&charging_pt, NULL, &chargingThread, NULL);
-	
+
 	while (!launch && is_charging) {
-		if (screen_on && SDL_GetTicks()-screen_start>=3000) screenOff();
+		unsigned long t = SDL_GetTicks()-screen_start;
+		if (screen_on) {
+			if (t>=3000) screenOff(); // Dim screen after 3 sec
+		}
+		else if (t>=15000) break; // Shutdown after 15 sec (MMP can charge while off)
 	}
-	
+
 	close(input_fd);
-	
+
 	pthread_cancel(input_pt);
 	pthread_join(input_pt, NULL);
-	
+
 	pthread_cancel(charging_pt);
 	pthread_join(charging_pt, NULL);
 
 	munmap(fb0_map, map_size);
 	close(fb0_fd);
-	
+
 	if (!launch) {
 		system("shutdown");
 		while (1) pause();
 	}
-	
+
     return EXIT_SUCCESS;
 }

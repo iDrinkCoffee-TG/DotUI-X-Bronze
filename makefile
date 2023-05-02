@@ -42,7 +42,11 @@ third-party/SDL-1.2/.patched:
 	cd third-party/SDL-1.2 && $(PATCH) -p1 < ../../patches/SDL-1.2/0001-vol-keys.patch && touch .patched
 
 third-party/picoarch/.patched:
-	cd third-party/picoarch && $(PATCH) -p1 < ../../patches/picoarch/0001-pokemini-make.patch && $(PATCH) -p1 < ../../patches/picoarch/0002-picoarch-vol-keys.patch && touch .patched
+	cd third-party/picoarch && \
+	$(PATCH) -p1 < ../../patches/picoarch/0001-pokemini-make.patch && \
+	$(PATCH) -p1 < ../../patches/picoarch/0002-picoarch-vol-keys.patch && \
+	$(PATCH) -p1 < ../../patches/picoarch/0003-picodrive-make.patch && \
+	touch .patched
 
 lib:
 	cd ./src/libmsettings && make
@@ -72,6 +76,7 @@ tools:
 	cd ./third-party/screenshot && make
 	cd ./third-party/logotweak/logomake && make
 	cd ./third-party/logotweak/logowrite && make
+	cd ./third-party/st-sdl && make platform=miyoomini
 	cd ./src/clock && make
 
 readmes:
@@ -122,6 +127,7 @@ payload:
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
+	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak
 	# cp ./third-party/vvvvvv/vvvvvv "./build/EXTRAS/Roms/Native Games (SH)/VVVVVV/" # TODO: fix build
 	# cp -R ./bits/bootlogos/pak/. ./build/EXTRAS/Tools/Single-use/bootlogo.tmp
 	# cp ./third-party/logotweak/logomake/logomake ./build/EXTRAS/Tools/Single-use/bootlogo.tmp/
@@ -171,3 +177,4 @@ clean:
 	cd ./src/blank && make clean
 	cd ./third-party/picoarch && make platform=miyoomini clean
 	cd ./third-party/DinguxCommander && make clean
+	cd ./third-party/st-sdl && make platform=miyoomini clean

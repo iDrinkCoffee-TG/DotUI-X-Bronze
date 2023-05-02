@@ -14,3 +14,6 @@
 	path = third-party/vvvvvv
 	url = https://github.com/shauninman/VVVVVV.git
 	branch = miniui-miyoomini
+[submodule "third-party/st-sdl"]
+	path = third-party/st-sdl
+	url = https://github.com/anzz1/st-sdl.git

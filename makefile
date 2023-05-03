@@ -33,18 +33,11 @@ ifeq "$(GCC_VER_GTE9_0)" "1"
   BUNDLE_LIBS=bundle
 endif
 
-all: third-party/SDL-1.2/.patched third-party/picoarch/.patched lib sdl core emu tools payload readmes $(BUNDLE_LIBS) zip
+all: third-party/picoarch/.patched lib sdl core emu tools payload readmes $(BUNDLE_LIBS) zip
 
 extras: emu tools
 
 # To fix/move into private repos
-third-party/SDL-1.2/.patched:
-	cd third-party/SDL-1.2 && \
-	test -s ./src/video/fbcon/SDL_fbevents.c && \
-	test -s ./src/video/fbcon/SDL_fbkeys.h && \
-	$(PATCH) -p1 < ../../patches/SDL-1.2/0001-vol-keys.patch && \
-	touch .patched
-
 third-party/picoarch/.patched:
 	cd third-party/picoarch && \
 	test -s ./Makefile && \

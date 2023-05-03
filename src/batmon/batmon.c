@@ -97,8 +97,10 @@ int main(void) {
 		if (screen_on) {
 			if (t>=3000) screenOff(); // Dim screen after 3 sec
 		}
-		else if (t>=15000) break; // Shutdown after 15 sec (MMP can charge while off)
+		else if (t>=20000) break; // Shutdown after 20 sec (MMP can charge while off)
 	}
+
+	memset(fb0_map, 0, map_size); // clear screen
 
 	close(input_fd);
 

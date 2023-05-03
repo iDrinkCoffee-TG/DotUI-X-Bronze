@@ -45,7 +45,6 @@ third-party/picoarch/.patched:
 	cd third-party/picoarch && \
 	$(PATCH) -p1 < ../../patches/picoarch/0001-pokemini-make.patch && \
 	$(PATCH) -p1 < ../../patches/picoarch/0002-picoarch-vol-keys.patch && \
-	$(PATCH) -p1 < ../../patches/picoarch/0003-picodrive-make.patch && \
 	touch .patched
 
 lib:

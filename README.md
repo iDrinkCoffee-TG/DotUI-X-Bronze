@@ -1,3 +1,12 @@
+# DotUI-X
+
+_DotUI-X is a fork of [DotUI](https://github.com/Xpndable/DotUI), where the X stands for eXperimental._
+
+While stability remains a focus, releases will be rolling and bugs can be expected when new features are added.  
+Consider this a development branch, while the main DotUI repository is the stable one.  
+The integration of DotUI-X features into the upstream DotUI repository shall be at the sole discretion of the DotUI maintainers.
+
+
 # DotUI
 
 _DotUI is a port of the popular [MiniUI](https://github.com/shauninman/MiniUI) custom launcher and integrated in-game menu, compatible with the [Miyoo Mini Plus](https://www.aliexpress.com/item/1005005215387485.html) handheld emulator_

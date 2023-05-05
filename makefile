@@ -178,7 +178,7 @@ clean:
 	cd ./third-party/st-sdl && make platform=miyoomini clean
 
 info:
-	@echo "CROSS_COMPILE=$(CROSS_COMPILE)"
 	@uname -srmo
+	@echo "CROSS_COMPILE=$(CROSS_COMPILE)"
 	@"$(CROSS_COMPILE)gcc" --version | head -1
 	@echo "$(BUILD_GCC)"

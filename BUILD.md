@@ -38,7 +38,7 @@ or connect via SSH - IP: localhost:2222 / User: docker / Pass: empty
 ### 2. Build
 
 1. Clone the repository  
-`git clone https://github.com/anzz1/DotUI-X.git`
+`git clone --recurse-submodules https://github.com/anzz1/DotUI-X.git`
 
 2. Build the app  
 `cd DotUI-X`  

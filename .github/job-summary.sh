@@ -35,5 +35,6 @@ update *
 echo $'\n'"<details>"
 echo $'\n'"<summary>Build System :desktop_computer:</summary>"
 echo $'\n'"> $(uname -srmo)  "
+echo "> CROSS_COMPILE="$CROSS_COMPILE"  "
 echo "> $("$CROSS_COMPILE""gcc" --version | head -1)"
 echo $'\n'"</details>"

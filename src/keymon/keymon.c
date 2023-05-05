@@ -116,7 +116,7 @@ void checkAXP() {
 
     int bat_fd = open("/tmp/battery", O_CREAT | O_WRONLY | O_TRUNC);
 	if (bat_fd>0) {
-		char value[3];
+		char value[4];
 		sprintf(value, "%d", battery_number);
 		write(bat_fd, value, strlen(value));
 		close(bat_fd);

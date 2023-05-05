@@ -323,8 +323,8 @@ void getDisplayName(const char* in_name, char* out_name) {
 	
 	// remove trailing whitespace
 	tmp = out_name + strlen(out_name) - 1;
-    while(tmp>out_name && isspace((unsigned char)*tmp)) tmp--;
-    tmp[1] = '\0';
+	while(tmp>out_name && isspace((unsigned char)*tmp)) tmp--;
+	tmp[1] = '\0';
 }
 void getEmuName(const char* in_name, char* out_name) {
 	char* tmp;
@@ -838,7 +838,7 @@ int isCharging(void) {
 	int charge_number;
 	int result;
 
-	FILE *fp;      
+	FILE *fp;
 	fp = popen(cmd, "r");
 	if (fgets(buf, batJsonSize, fp) != NULL) {
 		sscanf(buf,  "{\"battery\":%*d, \"voltage\":%*d, \"charging\":%d}", &charge_number);
@@ -904,15 +904,15 @@ int isWifiOn(void) {
 }
 
 int isWifiConnected(void) {
-	char ifname[IFNAMSIZ - 1] = "wlan0";
-    int fd, n;
+	const char ifname[IFNAMSIZ - 1] = "wlan0";
+	int fd, n;
 	struct ifreq ifr;
-    fd = socket(AF_INET, SOCK_DGRAM, 0);
-    ifr.ifr_addr.sa_family = AF_INET;
-    memcpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
-    n = ioctl(fd, SIOCGIFADDR, &ifr);
-    close(fd);
-    return (n == 0);
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	ifr.ifr_addr.sa_family = AF_INET;
+	memcpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+	n = ioctl(fd, SIOCGIFADDR, &ifr);
+	close(fd);
+	return (n == 0);
 }
 
 int getWifiState(void) {
@@ -921,3 +921,22 @@ int getWifiState(void) {
 	else lastWifiState=2;
 	return lastWifiState;
 }
+
+#if 0 // To be used later
+int getLocalIp(char* ip) {
+	const char ifname[IFNAMSIZ - 1] = "wlan0";
+	int fd, n;
+	struct ifreq ifr;
+	fd = socket(AF_INET, SOCK_DGRAM, 0);
+	ifr.ifr_addr.sa_family = AF_INET;
+	memcpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+	n = ioctl(fd, SIOCGIFADDR, &ifr);
+	close(fd);
+	if (n) {
+		strcpy(ip, "127.0.0.1");
+		return 0;
+	}
+	strcpy(ip, inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
+	return 1;
+}
+#endif

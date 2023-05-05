@@ -1268,6 +1268,8 @@ int main (int argc, char *argv[]) {
 	unsigned long setting_start = 0;
 	unsigned long cancel_start = SDL_GetTicks();
 	unsigned long power_start = 0;
+	unsigned long wifi_start = 0;
+	int wifi_state = -1;
 	while (!quit) {
 		unsigned long frame_start = SDL_GetTicks();
 		
@@ -1433,7 +1435,13 @@ int main (int argc, char *argv[]) {
 			power_start = 0;
 			dirty = 1;
 		}
-		
+
+		#define kWifiCheckDelay 5000
+		if (!dirty && now-wifi_start>=kWifiCheckDelay) {
+			if (getWifiState() != wifi_state)
+				dirty = 1;
+		}
+
 		int was_dirty = dirty; // dirty list (not including settings/battery)
 		
 		int old_setting = show_setting;
@@ -1479,6 +1487,9 @@ int main (int argc, char *argv[]) {
 			}
 			else {
 				GFX_blitBattery(screen, Screen.main.battery.x, Screen.main.battery.y);
+				GFX_blitWifi(screen, Screen.main.wifi.x, Screen.main.wifi.y);
+				wifi_start = now;
+				wifi_state = lastWifiState;
 			}
 			GFX_blitRule(screen, Screen.main.rule.top_y);
 		

@@ -189,6 +189,11 @@ typedef struct UnionScreen {
 			int alt_ox;
 			int alt_oy;
 		} list;
+
+		struct {
+			int x;
+			int y;
+		} wifi;
 	} main;
 	
 	struct { // menu
@@ -255,7 +260,12 @@ typedef struct UnionScreen {
 			int ox; // NOTE: from right edge
 			int oy;
 		} arrow;
-		
+
+		struct {
+			int x;
+			int y;
+		} wifi;
+
 		int bar_height;
 	} menu;
 		
@@ -267,6 +277,8 @@ typedef struct UnionScreen {
 
 extern UnionPaths Paths;
 extern UnionScreen Screen;
+
+extern int lastWifiState;
 
 void Input_reset(void);
 void Input_poll(void);
@@ -312,6 +324,7 @@ int GFX_blitText(SDL_Surface* surface, char* text, int size, int x, int y, int w
 SDL_Surface* GFX_getText(char* text, int size, int color);
 void GFX_blitBattery(SDL_Surface* surface, int x, int y);
 void GFX_blitSettings(SDL_Surface* surface, int x, int y, int icon, int value, int min_value, int max_value); // icon=0:brightness,1:volume,2:mute
+void GFX_blitWifi(SDL_Surface* surface, int x, int y);
 
 void waitForWake(void);
 void fauxSleep(void);
@@ -323,8 +336,11 @@ void powerOff(void);
 void enterSleep(void);
 void exitSleep(void);
 
-
 void disablePoweroff(void);
 int preventAutosleep(void);
+
+int isWifiOn(void);
+int isWifiConnected(void);
+int getWifiState(void);
 
 #endif

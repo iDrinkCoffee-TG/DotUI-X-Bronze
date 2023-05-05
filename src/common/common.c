@@ -8,6 +8,11 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+#include <arpa/inet.h>
+
 #include "common.h"
 #include <msettings.h>
 
@@ -105,6 +110,10 @@ UnionScreen Screen = {
 			.alt_ox		= 64, // from right
 			.alt_oy		= 20,
 		},
+		.wifi = {
+			.x = 550,
+			.y = 18,
+		},
 	},
 
 	.menu = {
@@ -163,6 +172,10 @@ UnionScreen Screen = {
 			.ox = 12, // from right
 			.oy = 14,
 		},
+		.wifi = {
+			.x = 556,
+			.y = 10,
+		},
 
 		.bar_height = 60,
 	},
@@ -192,6 +205,8 @@ struct ButtonState {
 	int just_released;
 };
 static struct ButtonState buttons[kButtonCount];
+
+int lastWifiState = 0;
 
 void Input_reset(void) {
 	// reset all
@@ -421,6 +436,8 @@ static SDL_Surface* battery_fill;
 static SDL_Surface* battery_line;
 static SDL_Surface* battery_fill_bad;
 static SDL_Surface* battery_line_bad;
+static SDL_Surface* wifi_on;
+static SDL_Surface* wifi_off;
 void GFX_init(void) {
 	char font_path[256];
 	sprintf(font_path, "%s/%s", Paths.resDir, "BPreplayBold-unhinted.otf");
@@ -436,19 +453,22 @@ void GFX_init(void) {
 	button = GFX_loadImage("btn.png");
 	bg_white = GFX_loadImage("bg-white.png");
 	bg_black = GFX_loadImage("bg-black.png");
-	
+
 	settings_bar_full = GFX_loadImage("settings-bar-full.png");
 	settings_bar_empty = GFX_loadImage("settings-bar-empty.png");
 	settings_brightness = GFX_loadImage("settings-brightness.png");
 	settings_volume = GFX_loadImage("settings-volume.png");
 	settings_mute = GFX_loadImage("settings-mute.png");
-		
+
 	battery_charging = GFX_loadImage("battery-charging.png");
 	battery_fill = GFX_loadImage("battery-fill.png");
 	battery_line = GFX_loadImage("battery-line.png");
 	battery_fill_bad = GFX_loadImage("bad-battery-fill.png");
 	battery_line_bad = GFX_loadImage("bad-battery-line.png");
-	
+
+	wifi_on = GFX_loadImage("wifi-on.png");
+	wifi_off = GFX_loadImage("wifi-off.png");
+
 	puts("GFX_init"); fflush(stdout);
 }
 void GFX_ready(void) {
@@ -756,6 +776,18 @@ void GFX_blitSettings(SDL_Surface* surface, int x, int y, int icon, int value, i
 	int h = settings_bar_full->h;
 	SDL_BlitSurface(settings_bar_full, &(SDL_Rect){0,0,w,h}, surface, &(SDL_Rect){x+Screen.settings.bar.ox,y+Screen.settings.bar.oy,w,h});
 }
+void GFX_blitWifi(SDL_Surface* surface, int x, int y) {
+	switch (getWifiState()) {
+		case 1:
+			SDL_BlitSurface(wifi_off, NULL, surface, &(SDL_Rect){x,y});
+			break;
+		case 2:
+			SDL_BlitSurface(wifi_on, NULL, surface, &(SDL_Rect){x,y});
+			break;
+		default:
+			break;
+	}
+}
 
 ///////////////////////////////////////
 
@@ -863,4 +895,29 @@ void powerOff(void) {
 		system("shutdown");
 		while (1) pause();
 	}
+}
+
+int isWifiOn(void) {
+	static char full_path[256];
+	sprintf(full_path, "%s/%s", Paths.userdataDir, ".wifi/wifi_on.txt");
+	return exists(full_path);
+}
+
+int isWifiConnected(void) {
+	char ifname[IFNAMSIZ - 1] = "wlan0";
+    int fd, n;
+	struct ifreq ifr;
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    ifr.ifr_addr.sa_family = AF_INET;
+    memcpy(ifr.ifr_name, ifname, IFNAMSIZ - 1);
+    n = ioctl(fd, SIOCGIFADDR, &ifr);
+    close(fd);
+    return (n == 0);
+}
+
+int getWifiState(void) {
+	if (!isWifiOn()) lastWifiState=0;
+	else if (!isWifiConnected()) lastWifiState=1;
+	else lastWifiState=2;
+	return lastWifiState;
 }

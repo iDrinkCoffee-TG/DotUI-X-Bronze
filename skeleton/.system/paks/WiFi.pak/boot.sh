@@ -4,7 +4,7 @@
 mkdir -p "$USERDATA_PATH/.wifi"
 
 if [ -f /mnt/SDCARD/.system/paks/WiFi.pak/8188fu.ko ] && [ -f "$USERDATA_PATH/.wifi/wifi_on.txt" ] && [ -f /appconfigs/wpa_supplicant.conf ]; then
-	if [ ! -f "$USERDATA_PATH/.wifi/telnet_on.txt" ]; then
+	if [ ! -f "$USERDATA_PATH/.wifi/telnet_on.txt" ] || [ ! -f "$TOOLS_PATH/Telnet.pak/launch.sh" ]; then
 		killall telnetd > /dev/null 2>&1 &
 	fi
 	if ! cat /proc/modules | grep -c 8188fu; then
@@ -18,7 +18,7 @@ if [ -f /mnt/SDCARD/.system/paks/WiFi.pak/8188fu.ko ] && [ -f "$USERDATA_PATH/.w
 	udhcpc -i wlan0 -s /etc/init.d/udhcpc.script > /dev/null 2>&1 &
 
 	# FTP
-	if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ]; then
+	if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ] && [ -f "$TOOLS_PATH/FTP.pak/launch.sh" ]; then
 		tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
 	fi
 

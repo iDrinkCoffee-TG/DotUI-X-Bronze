@@ -14,12 +14,12 @@ endif
 
 BUILD_ARCH!=uname -m
 BUILD_HASH!=git rev-parse --short HEAD
-BUILD_TIME!=date "+%Y-%m-%d %H:%M:%S"
-BUILD_REPO=https://github.com/shauninman/MiniUI
+BUILD_TIME!=date "+%Y-%m-%d %H:%M:%S %Z"
+BUILD_REPO=https://github.com/anzz1/DotUI-X
 BUILD_GCC:=$(shell $(CROSS_COMPILE)gcc -dumpfullversion -dumpversion)
 
 RELEASE_TIME!=date +%Y%m%d
-RELEASE_BASE=DotUI-$(RELEASE_TIME)
+RELEASE_BASE=DotUI-X-$(RELEASE_TIME)
 RELEASE_DOT!=find ./releases/. -regex ".*/$(RELEASE_BASE)-[0-9]+-base\.zip" -printf '.' | wc -m
 RELEASE_NAME=$(RELEASE_BASE)-$(RELEASE_DOT)
 
@@ -125,7 +125,7 @@ payload:
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
-	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak
+	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak/
 	# cp ./third-party/vvvvvv/vvvvvv "./build/EXTRAS/Roms/Native Games (SH)/VVVVVV/" # TODO: fix build
 	# cp -R ./bits/bootlogos/pak/. ./build/EXTRAS/Tools/Single-use/bootlogo.tmp
 	# cp ./third-party/logotweak/logomake/logomake ./build/EXTRAS/Tools/Single-use/bootlogo.tmp/
@@ -149,7 +149,7 @@ bundle:
 	cp -L /opt/miyoomini-toolchain/arm-none-linux-gnueabihf/libc/lib/libstdc++.so.6 ./build/PAYLOAD/.system/lib/
 
 zip:
-	cd ./build/PAYLOAD/.system/paks/MiniUI.pak && echo "$(RELEASE_NAME)-base.zip\n$(BUILD_HASH)" > version.txt
+	cd ./build/PAYLOAD/.system/paks/MiniUI.pak && echo "$(RELEASE_NAME)\n$(BUILD_HASH)" > version.txt
 	cp ./commits.txt ./build/PAYLOAD/.system/paks/MiniUI.pak
 	cd ./build/PAYLOAD && zip -r MiniUI.zip .system .tmp_update
 	mv ./build/PAYLOAD/MiniUI.zip ./build/PAYLOAD/miyoo354/app/
@@ -176,3 +176,9 @@ clean:
 	cd ./third-party/picoarch && make platform=miyoomini clean
 	cd ./third-party/DinguxCommander && make clean
 	cd ./third-party/st-sdl && make platform=miyoomini clean
+
+info:
+	@echo "CROSS_COMPILE=$(CROSS_COMPILE)"
+	@uname -srmo
+	@"$(CROSS_COMPILE)gcc" --version | head -1
+	@echo "$(BUILD_GCC)"

@@ -23,6 +23,7 @@ export SDCARD_PATH=/mnt/SDCARD
 export BIOS_PATH=/mnt/SDCARD/Bios
 export ROMS_PATH=/mnt/SDCARD/Roms
 export SAVES_PATH=/mnt/SDCARD/Saves
+export TOOLS_PATH=/mnt/SDCARD/Tools
 export USERDATA_PATH=/mnt/SDCARD/.userdata
 export LOGS_PATH=/mnt/SDCARD/.userdata/logs
 export CORES_PATH=/mnt/SDCARD/.system/cores

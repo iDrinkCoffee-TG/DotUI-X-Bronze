@@ -13,11 +13,21 @@ static volatile int screen_on = 0;
 static volatile unsigned long screen_start;
 void screenOn(void) {
 	screen_start = SDL_GetTicks();
-	if (!screen_on) system("echo 100 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle");
+	if (!screen_on) {
+		int fd = open("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", O_WRONLY);
+		if (fd>=0) {
+			dprintf(fd,"%d",9);
+			close(fd);
+		}
+	}
 	screen_on = 1;
 }
 void screenOff(void) {
-	system("echo 0 > /sys/class/pwm/pwmchip0/pwm0/duty_cycle");
+	int fd = open("/sys/class/pwm/pwmchip0/pwm0/duty_cycle", O_WRONLY);
+	if (fd>=0) {
+		dprintf(fd,"%d",0);
+		close(fd);
+	}
 	screen_on = 0;
 }
 
@@ -95,7 +105,7 @@ int main(void) {
 	while (!launch && is_charging) {
 		unsigned long t = SDL_GetTicks()-screen_start;
 		if (screen_on) {
-			if (t>=3000) screenOff(); // Dim screen after 3 sec
+			if (t>=5000) screenOff(); // Dim screen after 5 sec
 		}
 		else if (t>=20000) break; // Shutdown after 20 sec (MMP can charge while off)
 	}

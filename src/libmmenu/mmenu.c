@@ -665,6 +665,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 			dirty = 0;
 			SDL_BlitSurface(cache, NULL, screen, NULL);
 			GFX_blitBattery(screen, Screen.menu.battery.x, Screen.menu.battery.y);
+			GFX_blitWifi(screen, Screen.menu.wifi.x, Screen.menu.wifi.y);
 			
 			if (show_setting) {
 				GFX_blitSettings(screen, Screen.menu.settings.x, Screen.menu.settings.y, show_setting==1?0:(setting_value>0?1:2), setting_value,setting_min,setting_max);

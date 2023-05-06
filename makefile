@@ -63,6 +63,8 @@ core:
 	cd ./src/confirm && make
 	cd ./src/say && make
 	cd ./src/blank && make
+	cd ./src/keyboard && make
+	cd ./src/oss && make
 
 emu:
 	cd ./third-party/picoarch && make platform=miyoomini -j
@@ -105,6 +107,8 @@ payload:
 	cp ./src/confirm/confirm ./build/PAYLOAD/.system/bin/
 	cp ./src/say/say ./build/PAYLOAD/.system/bin/
 	cp ./src/blank/blank ./build/PAYLOAD/.system/bin/
+	cp ./src/keyboard/keyboard ./build/PAYLOAD/.system/bin/
+	cp ./src/oss/oss ./build/PAYLOAD/.system/bin/
 	cp ./src/say/say ./build/PAYLOAD/miyoo354/app/
 	cp ./src/blank/blank ./build/PAYLOAD/miyoo354/app/
 	cp ./third-party/picoarch/output/picoarch ./build/PAYLOAD/.system/bin/

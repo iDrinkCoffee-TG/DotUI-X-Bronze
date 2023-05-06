@@ -5,33 +5,58 @@ cd "$DIR"
 
 mkdir -p "$USERDATA_PATH/.wifi"
 
-show confirm.png
-if [ -f "$USERDATA_PATH/.wifi/wifi_on.txt" ]; then
-	WIFI_ON=1
-	say "WiFi: Enabled"
-else
-	WIFI_ON=0
-	say "WiFi: Disabled"
-fi
+CONFIRM=0
+WIFI_SSID="$(keyboard "Enter WiFi network name:" 32)"
 
-while confirm; do
+if [ $? -eq 0 ] && [ ! -z "$WIFI_SSID" ]; then
 	show confirm.png
-	if [ $WIFI_ON == 1 ]; then
-		WIFI_ON=0
-		say "WiFi: Disabled"
-	else
-		WIFI_ON=1
-		say "WiFi: Enabled"
-	fi
-	sleep 1
-done
-
-if [ -f "$USERDATA_PATH/.wifi/wifi_on.txt" ]; then
-	if [ $WIFI_ON == 0 ]; then
-		LD_PRELOAD= ./wifioff.sh > /dev/null 2>&1 &
-	fi
-else
-	if [ $WIFI_ON == 1 ] && [ -f /mnt/SDCARD/.system/paks/WiFi.pak/8188fu.ko ] && [ -f /appconfigs/wpa_supplicant.conf ]; then
-		LD_PRELOAD= ./wifion.sh > /dev/null 2>&1 &
+	say "WiFi network name set:"$'\n'"${WIFI_SSID:0:16}"$'\n'"${WIFI_SSID:17}"
+	if confirm; then
+		CONFIRM=1
 	fi
 fi
+
+if [ $CONFIRM == 0 ]; then 
+	show okay.png
+	say "WiFi network settings were not changed"$'\n'"Exiting setup ..."
+	sleep 3
+	exit 0
+fi
+
+CONFIRM=0
+WIFI_PASS="$(keyboard "Enter WiFi network pass:" 63)"
+
+if [ $? -eq 0 ]; then
+	show confirm.png
+	if [ ! -z "$WIFI_PASS" ]; then
+		say "WiFi network password set:"$'\n'"${WIFI_PASS:0:16}"$'\n'"${WIFI_PASS:17:16}"$'\n'"${WIFI_PASS:33:16}"$'\n'"${WIFI_PASS:48}"
+	else
+		say "WiFi network password set to empty"
+	fi
+	if confirm; then
+		CONFIRM=1
+	fi
+fi
+
+if [ $CONFIRM == 0 ]; then 
+	show okay.png
+	say "WiFi network settings were not changed"$'\n'"Exiting setup ..."
+	sleep 3
+	exit 0
+fi
+
+echo "ctrl_interface=/var/run/wpa_supplicant" > /appconfigs/wpa_supplicant.conf
+echo "update_config=1" >> /appconfigs/wpa_supplicant.conf
+echo $'\n'"network={" >> /appconfigs/wpa_supplicant.conf
+echo $'\tssid="'"$WIFI_SSID"$'"' >> /appconfigs/wpa_supplicant.conf
+if [ ! -z "$WIFI_PASS" ]; then
+	echo $'\tpsk="'"$WIFI_PASS"$'"' >> /appconfigs/wpa_supplicant.conf
+else
+	echo $'\t'"key_mgmt=NONE" >> /appconfigs/wpa_supplicant.conf
+fi
+echo "}" >> /appconfigs/wpa_supplicant.conf
+
+show okay.png
+say "WiFi network settings saved"$'\n'"Exiting setup ..."
+sleep 3
+exit 0

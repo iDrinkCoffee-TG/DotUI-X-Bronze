@@ -105,9 +105,9 @@ int main(void) {
 	while (!launch && is_charging) {
 		unsigned long t = SDL_GetTicks()-screen_start;
 		if (screen_on) {
-			if (t>=5000) screenOff(); // Dim screen after 5 sec
+			if (t>=10000) screenOff(); // Dim screen after 10 sec
 		}
-		else if (t>=20000) break; // Shutdown after 20 sec (MMP can charge while off)
+		else if (t>=30000) break; // Shutdown after 30 sec (MMP can charge while off)
 	}
 
 	memset(fb0_map, 0, map_size); // clear screen

@@ -8,7 +8,7 @@
 	branch = miniui-miyoomini
 [submodule "third-party/picoarch"]
 	path = third-party/picoarch
-	url = https://github.com/shauninman/picoarch.git
+	url = https://github.com/anzz1/picoarch.git
 	branch = miniui-miyoomini
 [submodule "third-party/vvvvvv"]
 	path = third-party/vvvvvv

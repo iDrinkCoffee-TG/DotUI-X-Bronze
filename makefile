@@ -33,18 +33,9 @@ ifeq "$(GCC_VER_GTE9_0)" "1"
   BUNDLE_LIBS=bundle
 endif
 
-all: third-party/picoarch/.patched lib sdl core emu tools payload readmes $(BUNDLE_LIBS) zip
+all: lib sdl core emu tools payload readmes $(BUNDLE_LIBS) zip
 
 extras: emu tools
-
-# To fix/move into private repos
-third-party/picoarch/.patched:
-	cd third-party/picoarch && \
-	test -s ./Makefile && \
-	test -s ./source/plat_miyoomini.c && \
-	$(PATCH) -p1 < ../../patches/picoarch/0001-pokemini-make.patch && \
-	$(PATCH) -p1 < ../../patches/picoarch/0002-picoarch-vol-keys.patch && \
-	touch .patched
 
 lib:
 	cd ./src/libmsettings && make
@@ -167,7 +158,7 @@ clean:
 	rm -rf ./build
 	cd ./src/libmsettings && make clean
 	cd ./src/libmmenu && make clean
-	cd ./third-party/SDL-1.2 && make distclean
+	cd ./third-party/SDL-1.2 && make distclean || :
 	cd ./src/batmon && make clean
 	cd ./src/keymon && make clean
 	cd ./src/lumon && make clean
@@ -177,7 +168,7 @@ clean:
 	cd ./src/confirm && make clean
 	cd ./src/say && make clean
 	cd ./src/blank && make clean
-	cd ./third-party/picoarch && make platform=miyoomini clean
+	cd ./third-party/picoarch && make platform=miyoomini clean-all
 	cd ./third-party/DinguxCommander && make clean
 	cd ./third-party/st-sdl && make platform=miyoomini clean
 

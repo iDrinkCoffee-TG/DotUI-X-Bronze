@@ -12,11 +12,11 @@ ifconfig wlan0 up
 udhcpc -i wlan0 -s /etc/init.d/udhcpc.script > /dev/null 2>&1 &
 
 # Telnet
-if [ ! -f "$USERDATA_PATH/.wifi/telnet_on.txt" ]; then
+if [ -f "$USERDATA_PATH/.wifi/telnet_on.txt" ] && [ -f "$TOOLS_PATH/Telnet.pak/launch.sh" ]; then
 	(cd / && telnetd -l sh)
 fi
 
 # FTP
-if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ]; then
+if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ] && [ -f "$TOOLS_PATH/FTP.pak/launch.sh" ]; then
 	tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
 fi

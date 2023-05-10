@@ -168,9 +168,18 @@ clean:
 	cd ./src/confirm && make clean
 	cd ./src/say && make clean
 	cd ./src/blank && make clean
-	cd ./third-party/picoarch && make platform=miyoomini clean-all
+	cd ./src/clock && make clean
+	cd ./src/keyboard && make clean
+	cd ./src/oss && make clean
 	cd ./third-party/DinguxCommander && make clean
+	cd ./third-party/latency_reduction && make clean
+	cd ./third-party/logotweak/logomake && make clean
+	cd ./third-party/logotweak/logoread && make clean
+	cd ./third-party/logotweak/logowrite && make clean
+	cd ./third-party/picoarch && make platform=miyoomini clean-all
+	cd ./third-party/screenshot && make clean
 	cd ./third-party/st-sdl && make platform=miyoomini clean
+	# cd ./third-party/vvvvvv && make clean
 
 info:
 	@uname -srmo

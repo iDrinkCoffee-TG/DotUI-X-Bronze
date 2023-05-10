@@ -1,10 +1,22 @@
+!/**/.gitkeep
+!/**/.keep
+
+.DS_Store
+.DS_Store?
+Thumbs.db
+.vscode
+.vagrant
+
+*.o
+*.so
+*.map
+*.idb
+*.pdb
+*.id[0-9]
+
 build/
 nopes/
 releases/
-
-.DS_Store
-*.o
-*.so
 
 # thanks I hate it
 batmon
@@ -27,6 +39,10 @@ blank
 !blank/
 clock
 !clock/
+keyboard
+!keyboard/
+oss
+!oss/
 
 screenshot
 !screenshot/

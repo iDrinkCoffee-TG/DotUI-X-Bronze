@@ -108,17 +108,17 @@ payload:
 	cp ./third-party/picoarch/output/gpsp_libretro.so ./build/PAYLOAD/.system/cores/
 	cp ./third-party/picoarch/output/pcsx_rearmed_libretro.so ./build/PAYLOAD/.system/cores/
 	cp ./third-party/picoarch/output/picodrive_libretro.so ./build/PAYLOAD/.system/cores/
-	cp ./third-party/picoarch/output/snes9x2005_plus_libretro.so ./build/PAYLOAD/.system/cores/
+	cp ./third-party/picoarch/output/mednafen_supafaust_libretro.so ./build/PAYLOAD/.system/cores/
 	cp ./third-party/DinguxCommander/output/DinguxCommander ./build/EXTRAS/Tools/Files.pak/
 	cp ./src/clock/clock ./build/EXTRAS/Tools/Clock.pak/
 	cp -r ./third-party/DinguxCommander/res ./build/EXTRAS/Tools/Files.pak/
 	cp ./third-party/screenshot/screenshot ./build/EXTRAS/Tools/Screenshots.pak/
 	cp ./third-party/picoarch/output/beetle-pce-fast_libretro.so ./build/EXTRAS/Emus/PCE.pak/mednafen_pce_fast_libretro.so
 	cp ./third-party/picoarch/output/pokemini_libretro.so ./build/EXTRAS/Emus/PKM.pak/
-	cp ./third-party/picoarch/output/mednafen_supafaust_libretro.so ./build/EXTRAS/Emus/SUPA.pak/
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/MGBA.pak/
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
+	cp ./third-party/picoarch/output/smsplus-gx_libretro.so ./build/EXTRAS/Emus/GG.pak/smsplus_libretro.so
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
 	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak/
 	# cp ./third-party/vvvvvv/vvvvvv "./build/EXTRAS/Roms/Native Games (SH)/VVVVVV/" # TODO: fix build

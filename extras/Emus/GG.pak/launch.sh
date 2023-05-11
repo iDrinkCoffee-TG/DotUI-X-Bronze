@@ -1,7 +1,8 @@
 #!/bin/sh
 
-EMU_EXE=picodrive
+EMU_EXE=smsplus
 PERF_LEVEL=performance
+CORES_PATH=$(dirname "$0")
 
 ###############################
 

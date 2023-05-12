@@ -215,10 +215,7 @@ int main(int argc , char* argv[]) {
 					if (event.code==BUTTON_MENU || event.code==KEY_POWER) {
 						quit = 1;
 						break;
-					} else if (event.code==BUTTON_START) {
-						quit = 0;
-						break;
-					} else if (event.value==0 || event.value==2) {
+					} else if (event.value==1 || event.value==2) {
 						if (event.code==KEY_UP) {
 							prev_key = key;
 							if (key > 20) key -= 21;
@@ -243,7 +240,7 @@ int main(int argc , char* argv[]) {
 							back();
 							printstr(fb0_map, font, white);
 							break;
-						} else if (event.value==0) {
+						} else if (event.value==1) {
 							if (event.code==BUTTON_X || event.code==BUTTON_L1 || event.code==BUTTON_R1 ||
 									event.code==BUTTON_L2 || event.code==BUTTON_R2 || event.code==BUTTON_SELECT) {
 								memset(fb0_map+(640*24*4), 0, 640*kLineHeight*3*4);
@@ -260,6 +257,9 @@ int main(int argc , char* argv[]) {
 								break;
 							}
 						}
+					} else if (event.value==0 && event.code==BUTTON_START) {
+						quit = 0;
+						break;
 					}
 				}
 			}

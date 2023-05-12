@@ -5,7 +5,7 @@ cd "$DIR"
 
 mkdir -p "$USERDATA_PATH/.wifi"
 
-show confirm.png
+show toggle.png
 if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ]; then
 	say "FTP: Enabled"
 else
@@ -13,18 +13,17 @@ else
 fi
 
 while confirm; do
-	show confirm.png
+	show toggle.png
 	if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ]; then
 		rm -f "$USERDATA_PATH/.wifi/ftp_on.txt"
-		say "FTP: ..."
 		LD_PRELOAD= killall ftpd > /dev/null 2>&1
 		LD_PRELOAD= killall tcpsvd > /dev/null 2>&1
-		show confirm.png
 		say "FTP: Disabled"
 	else
 		touch "$USERDATA_PATH/.wifi/ftp_on.txt"
-		LD_PRELOAD= tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
+		if [ -f "$USERDATA_PATH/.wifi/wifi_on.txt" ]; then
+			LD_PRELOAD= tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
+		fi
 		say "FTP: Enabled"
 	fi
-	sleep 1
 done

@@ -68,6 +68,7 @@ tools:
 	cd ./third-party/logotweak/logomake && make
 	cd ./third-party/logotweak/logowrite && make
 	cd ./third-party/st-sdl && make platform=miyoomini
+	cd ./third-party/dropbear-embedded && make
 	cd ./src/clock && make
 
 readmes:
@@ -121,6 +122,7 @@ payload:
 	cp ./third-party/picoarch/output/smsplus-gx_libretro.so ./build/EXTRAS/Emus/GG.pak/smsplus_libretro.so
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
 	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak/
+	cp ./third-party/dropbear-embedded/dropbear ./build/EXTRAS/Tools/SSH.pak/
 	# cp ./third-party/vvvvvv/vvvvvv "./build/EXTRAS/Roms/Native Games (SH)/VVVVVV/" # TODO: fix build
 	# cp -R ./bits/bootlogos/pak/. ./build/EXTRAS/Tools/Single-use/bootlogo.tmp
 	# cp ./third-party/logotweak/logomake/logomake ./build/EXTRAS/Tools/Single-use/bootlogo.tmp/
@@ -179,6 +181,7 @@ clean:
 	cd ./third-party/picoarch && make platform=miyoomini clean-all
 	cd ./third-party/screenshot && make clean
 	cd ./third-party/st-sdl && make platform=miyoomini clean
+	cd ./third-party/dropbear-embedded && make clean
 	# cd ./third-party/vvvvvv && make clean
 
 info:

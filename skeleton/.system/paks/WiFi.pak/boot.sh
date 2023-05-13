@@ -22,13 +22,10 @@ if [ -f /mnt/SDCARD/.system/paks/WiFi.pak/8188fu.ko ] && [ -f "$USERDATA_PATH/.w
 		tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
 	fi
 
-	# SSH (TBD)
-	# if [ ! -f "$USERDATA_PATH/.wifi/ssh_on.txt" ]; then
-	# 	ssh_pass=$(cat "$USERDATA_PATH/.wifi/ssh_pass.txt")
-	# 	if [ ! -z "$ssh_pass" ]; then
-	# 		/mnt/SDCARD/.system/paks/WiFi.pak/dropbear -R -B -z -e -Y "$ssh_pass" > /dev/null 2>&1 &
-	# 	fi
-	# fi
+	# SSH
+	if [ -f "$USERDATA_PATH/.wifi/ssh_on.txt" ] && [ -f "$TOOLS_PATH/SSH.pak/dropbear.sh" ]; then
+		"$TOOLS_PATH/SSH.pak/dropbear.sh" > /dev/null 2>&1 &
+	fi
 else
 	killall telnetd > /dev/null 2>&1 &
 fi

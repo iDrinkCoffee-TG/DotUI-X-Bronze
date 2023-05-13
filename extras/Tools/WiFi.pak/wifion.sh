@@ -20,3 +20,8 @@ fi
 if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ] && [ -f "$TOOLS_PATH/FTP.pak/launch.sh" ]; then
 	tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
 fi
+
+# SSH
+if [ -f "$USERDATA_PATH/.wifi/ssh_on.txt" ] && [ -f "$TOOLS_PATH/SSH.pak/dropbear.sh" ]; then
+	"$TOOLS_PATH/SSH.pak/dropbear.sh" > /dev/null 2>&1 &
+fi

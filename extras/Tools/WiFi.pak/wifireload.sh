@@ -3,6 +3,7 @@
 killall telnetd > /dev/null 2>&1 &
 killall ftpd > /dev/null 2>&1 &
 killall tcpsvd > /dev/null 2>&1 &
+killall dropbear > /dev/null 2>&1 &
 killall wpa_supplicant > /dev/null 2>&1
 killall udhcpc > /dev/null 2>&1
 ifconfig wlan0 down
@@ -20,4 +21,9 @@ fi
 # FTP
 if [ -f "$USERDATA_PATH/.wifi/ftp_on.txt" ] && [ -f "$TOOLS_PATH/FTP.pak/launch.sh" ]; then
 	tcpsvd -E 0.0.0.0 21 ftpd -w /mnt/SDCARD > /dev/null 2>&1 &
+fi
+
+# SSH
+if [ -f "$USERDATA_PATH/.wifi/ssh_on.txt" ] && [ -f "$TOOLS_PATH/SSH.pak/dropbear.sh" ]; then
+	"$TOOLS_PATH/SSH.pak/dropbear.sh" > /dev/null 2>&1 &
 fi

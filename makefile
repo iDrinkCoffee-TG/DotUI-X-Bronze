@@ -120,7 +120,8 @@ payload:
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
 	cp ./third-party/picoarch/output/smsplus-gx_libretro.so ./build/EXTRAS/Emus/GG.pak/smsplus_libretro.so
-	cp ./third-party/picoarch/output/prboom_libretro.so ./build/EXTRAS/Emus/DOOM.pak/prboom_libretro.so
+	cp ./third-party/picoarch/output/prboom_libretro.so ./build/EXTRAS/Emus/DOOM.pak/
+	cp ./third-party/picoarch/cores/prboom/prboom.wad ./build/EXTRAS/Bios/DOOM/
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
 	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak/
 	cp ./third-party/dropbear-embedded/dropbear ./build/EXTRAS/Tools/SSH.pak/

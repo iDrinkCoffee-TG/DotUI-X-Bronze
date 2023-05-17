@@ -812,7 +812,7 @@ void waitForWake(void) {
 		}
 		SDL_Delay(200);
 		if (can_poweroff && SDL_GetTicks()-sleep_ticks>=120000) { // increased to two minutes
-			if (isCharging()) sleep_ticks += 60000; // check again in a minute
+			if (isCharging_rt()) sleep_ticks += 60000; // check again in a minute
 			else powerOff();
 		}
 	}
@@ -831,22 +831,29 @@ void fauxSleep(void) {
 }
 
 int isCharging(void) {
+	return exists("/tmp/charging");
+}
+
+int isCharging_rt(void) {
 	// Code adapted from OnionOS
 	char *cmd = "cd /customer/app/ ; ./axp_test";  
-	int batJsonSize = 100;
-	char buf[batJsonSize];
-	int charge_number;
-	int result;
+	int charge_number = 0;
 
 	FILE *fp;
 	fp = popen(cmd, "r");
-	if (fgets(buf, batJsonSize, fp) != NULL) {
-		sscanf(buf,  "{\"battery\":%*d, \"voltage\":%*d, \"charging\":%d}", &charge_number);
-		result = (charge_number==3);
+	if (fp) {
+		if (fscanf(fp, "{\"battery\":%*d, \"voltage\":%*d, \"charging\":%d}", &charge_number) == 1) {
+			if (exists("/tmp/charging")) {
+				if (charge_number != 3) {
+					unlink("/tmp/charging");
+				}
+			} else if (charge_number == 3) {
+				touch("/tmp/charging");
+			}
+		}
+		pclose(fp);
 	}
-	pclose(fp);
-	
-	return result;
+	return (charge_number == 3);
 }
 
 #define GOVERNOR_PATH "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"

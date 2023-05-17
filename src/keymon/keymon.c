@@ -54,72 +54,67 @@
 #endif
 
 //	Global Variables
-typedef struct {
-    int channel_value;
-    int adc_value;
-} SAR_ADC_CONFIG_READ;
+//typedef struct {
+//	int channel_value;
+//	int adc_value;
+//} SAR_ADC_CONFIG_READ;
 
-#define SARADC_IOC_MAGIC                     'a'
-#define IOCTL_SAR_INIT                       _IO(SARADC_IOC_MAGIC, 0)
-#define IOCTL_SAR_SET_CHANNEL_READ_VALUE     _IO(SARADC_IOC_MAGIC, 1)
+//#define SARADC_IOC_MAGIC                     'a'
+//#define IOCTL_SAR_INIT                       _IO(SARADC_IOC_MAGIC, 0)
+//#define IOCTL_SAR_SET_CHANNEL_READ_VALUE     _IO(SARADC_IOC_MAGIC, 1)
 
-static SAR_ADC_CONFIG_READ  adc_config = {0,0};
-static int is_charging = 0;
-static int eased_charge = 0;
-static int sar_fd = 0;
+//static SAR_ADC_CONFIG_READ  adc_config = {0,0};
+//static int is_charging = 0;
+//static int eased_charge = 0;
+//static int sar_fd = 0;
 static struct input_event	ev;
 static int	input_fd = 0;
 static pthread_t adc_pt;
+
+int exists(const char* path) {
+	return access(path, F_OK)==0;
+}
+void touch(const char* path) {
+	close(open(path, O_RDWR|O_CREAT, 0777));
+}
 
 void quit(int exitcode) {
 	pthread_cancel(adc_pt);
 	pthread_join(adc_pt, NULL);
 	QuitSettings();
-	
+
 	if (input_fd > 0) close(input_fd);
-	if (sar_fd > 0) close(sar_fd);
+	//if (sar_fd > 0) close(sar_fd);
 	exit(exitcode);
-}
-
-static int isCharging(void) {
-    // Code adapted from OnionOS
-	char *cmd = "cd /customer/app/ ; ./axp_test";  
-	int batJsonSize = 100;
-	char buf[batJsonSize];
-	int charge_number;
-	int result;
-
-	FILE *fp;      
-	fp = popen(cmd, "r");
-	if (fgets(buf, batJsonSize, fp) != NULL) {
-		sscanf(buf,  "{\"battery\":%*d, \"voltage\":%*d, \"charging\":%d}", &charge_number);
-		result = (charge_number==3);
-	}
-	pclose(fp); 
-
-	return result;
 }
 
 void checkAXP() {
 	// Code adapted from OnionOS
-    char *cmd = "cd /customer/app/ ; ./axp_test";  
-    int batJsonSize = 100;
-    char buf[batJsonSize];
-    int battery_number;
+	char *cmd = "cd /customer/app/ ; ./axp_test";  
+	int battery_number = 0;
+	int charge_number = 0;
 
-    FILE *fp;      
-    fp = popen(cmd, "r");
-        if (fgets(buf, batJsonSize, fp) != NULL) {
-           sscanf(buf,  "{\"battery\":%d, \"voltage\":%*d, \"charging\":%*d}", &battery_number);
-        }
-    pclose(fp);
-
-    int bat_fd = open("/tmp/battery", O_CREAT | O_WRONLY | O_TRUNC);
-	if (bat_fd>0) {
-		char value[4];
-		sprintf(value, "%d", battery_number);
-		write(bat_fd, value, strlen(value)+1);
-		close(bat_fd);
+	FILE *fp;
+	fp = popen(cmd, "r");
+	if (fp) {
+		if (fscanf(fp, "{\"battery\":%d, \"voltage\":%*d, \"charging\":%d}", &battery_number, &charge_number) == 2 &&
+			battery_number <= 100) {
+			int bat_fd = open("/tmp/battery", O_CREAT | O_WRONLY | O_TRUNC, 0777);
+			if (bat_fd>0) {
+				char value[4];
+				sprintf(value, "%d", battery_number);
+				write(bat_fd, value, (battery_number == 100 ? 3 : (battery_number >= 10 ? 2 : 1)));
+				close(bat_fd);
+			}
+			if (exists("/tmp/charging")) {
+				if (charge_number != 3) {
+					unlink("/tmp/charging");
+				}
+			} else if (charge_number == 3) {
+				touch("/tmp/charging");
+			}
+		}
+		pclose(fp);
 	}
 }
 
@@ -134,10 +129,10 @@ static void* runAXP(void *arg) {
 int main (int argc, char *argv[]) {
 	checkAXP();
 	pthread_create(&adc_pt, NULL, &runAXP, NULL);
-	
+
 	// Set Initial Volume / Brightness
 	InitSettings();
-	
+
 	input_fd = open("/dev/input/event0", O_RDONLY);
 
 	// Main Loop
@@ -202,7 +197,7 @@ int main (int argc, char *argv[]) {
 		default:
 			break;
 		}
-		
+
 		if (menu_pressed && power_pressed) {
 			menu_pressed = power_pressed = 0;
 			system("shutdown");

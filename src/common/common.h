@@ -330,6 +330,7 @@ void waitForWake(void);
 void fauxSleep(void);
 
 int isCharging(void);
+int isCharging_rt(void);
 
 void powerOff(void);
 

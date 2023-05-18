@@ -49,7 +49,7 @@ UnionScreen Screen = {
 			.ox_A	= 1,
 			.ox_B	= 2,
 			.ox_X	= 1,
-			.ox_Y	= 2,
+			.ox_Y	= 0,
 		},
 	},
 
@@ -193,6 +193,8 @@ UnionPaths Paths = {
 	.romsDir		= "/mnt/SDCARD/Roms",
 	.recentPath		= "/mnt/SDCARD/.userdata/.miniui/recent.txt",
 	.fauxRecentDir 	= "/mnt/SDCARD/Recently Played",
+	.fauxFavDir		= "/mnt/SDCARD/Favorites",
+	.favPath		= "/mnt/SDCARD/.userdata/.miniui/favorite.txt",
 	.collectionsDir = "/mnt/SDCARD/Collections",
 };
 
@@ -289,9 +291,7 @@ int suffixMatch(char* suf, char* str) {
 	return (offset>=0 && strncasecmp(suf, str+offset, len)==0);
 }
 int exactMatch(char* str1, char* str2) {
-	int len1 = strlen(str1);
-	if (len1!=strlen(str2)) return 0;
-	return (strncmp(str1,str2,len1)==0);
+	return !strcmp(str1, str2);
 }
 int hide(char* file_name) {
 	return (file_name[0]=='.' || suffixMatch(".sbi", file_name));

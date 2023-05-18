@@ -1665,7 +1665,7 @@ int main (int argc, char *argv[]) {
 				readyFavorite(top->entries->items[top->selected]);
 			}
 			
-			if (total>0 && Input_justReleased(kButtonAltEmu)){
+			if (total>0 && Input_justReleased(kButtonAltEmu) && (can_fav || can_unfav)) {
 				Entry* self = top->entries->items[top->selected];
 				int preselected = top->selected;
 				if (editFavorite(self->path))

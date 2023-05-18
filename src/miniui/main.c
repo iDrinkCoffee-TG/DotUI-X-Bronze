@@ -1758,10 +1758,10 @@ int main (int argc, char *argv[]) {
 		if (Input_justPressed(kButtonSleep)) {
 			power_start = now;
 		}
-		
+
 		#define kSleepDelay 30000
 		if (now-cancel_start>=kSleepDelay && preventAutosleep()) cancel_start = now;
-		
+
 		if (now-cancel_start>=kSleepDelay || Input_justReleased(kButtonSleep)) // || Input_justPressed(kButtonMenu))
 		{
 			fauxSleep();
@@ -1770,14 +1770,14 @@ int main (int argc, char *argv[]) {
 			dirty = 1;
 		}
 
-		#define kWifiCheckDelay 5000
+		#define kWifiCheckDelay 1000
 		if (!dirty && now-wifi_start>=kWifiCheckDelay) {
 			if (getWifiState() != wifi_state)
 				dirty = 1;
 		}
 
 		int was_dirty = dirty; // dirty list (not including settings/battery)
-		
+
 		int old_setting = show_setting;
 		int old_value = setting_value;
 		show_setting = 0;

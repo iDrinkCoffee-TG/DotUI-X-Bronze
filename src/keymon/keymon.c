@@ -120,7 +120,7 @@ void checkAXP() {
 
 static void* runAXP(void *arg) {
 	while(1) {
-		sleep(5);
+		sleep(1);
 		checkAXP();
 	}
 	return 0;

@@ -41,10 +41,10 @@ lib:
 	cd ./src/libmsettings && make
 	cd ./src/libmmenu && make
 	cd ./third-party/latency_reduction && make
-sdl:
+sdl: lib
 	cd ./third-party/SDL-1.2 && ./make.sh
 
-core:
+core: lib
 	cd ./src/batmon && make
 	cd ./src/keymon && make
 	cd ./src/lumon && make

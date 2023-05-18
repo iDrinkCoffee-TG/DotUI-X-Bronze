@@ -465,7 +465,7 @@ static int favHasM3u(char* rom_path, char* m3u_path) {
 	return exists(m3u_path);
 }
 
-#define kMaxFavorites 24 // a multiple of all menu rows
+#define kMaxFavorites 60 // a multiple of all menu rows
 static void saveFavorites(void) {
 	FILE* file = fopen(Paths.favPath, "w");
 	if (file) {
@@ -1654,18 +1654,18 @@ int main (int argc, char *argv[]) {
 					}
 				}
 			}
-		
+
 			if (selected!=top->selected) {
 				top->selected = selected;
 				dirty = 1;
 			}
-		
+
 			if (dirty && total>0){
 				readyResume(top->entries->items[top->selected]);
 				readyFavorite(top->entries->items[top->selected]);
 			}
-			
-			if (total>0 && Input_justReleased(kButtonAltEmu) && (can_fav || can_unfav)) {
+
+			if (total>0 && Input_justReleased(kButtonAltEmu) && ((can_fav && favorites->count<kMaxFavorites) || can_unfav)) {
 				Entry* self = top->entries->items[top->selected];
 				int preselected = top->selected;
 				if (editFavorite(self->path))
@@ -1685,7 +1685,7 @@ int main (int argc, char *argv[]) {
 							end = restore_end;
 						}
 					}
-					
+
 					top = Directory_new(Paths.fauxFavDir, selected);
 					top->start = start;
 					top->end = end ? end : ((top->entries->count<Screen.main.list.row_count) ? top->entries->count : Screen.main.list.row_count);

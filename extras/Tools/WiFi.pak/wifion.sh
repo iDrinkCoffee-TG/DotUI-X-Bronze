@@ -25,3 +25,8 @@ fi
 if [ -f "$USERDATA_PATH/.wifi/ssh_on.txt" ] && [ -f "$TOOLS_PATH/SSH.pak/dropbear.sh" ]; then
 	"$TOOLS_PATH/SSH.pak/dropbear.sh" > /dev/null 2>&1 &
 fi
+
+# NTP
+if [ -f "$USERDATA_PATH/.wifi/ntp_on.txt" ]; then
+	ntpd -p 216.239.35.12 -S "/sbin/hwclock -w -u" > /dev/null 2>&1 &
+fi

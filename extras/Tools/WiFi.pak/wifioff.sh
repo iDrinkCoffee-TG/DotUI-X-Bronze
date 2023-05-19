@@ -1,6 +1,7 @@
 #!/bin/sh
 
 rm -f "$USERDATA_PATH/.wifi/wifi_on.txt"
+killall ntpd > /dev/null 2>&1 &
 killall telnetd > /dev/null 2>&1 &
 killall ftpd > /dev/null 2>&1 &
 killall tcpsvd > /dev/null 2>&1 &

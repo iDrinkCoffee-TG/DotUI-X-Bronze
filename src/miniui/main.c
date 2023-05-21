@@ -123,6 +123,7 @@ typedef struct Entry {
 	int use_alt;
 } Entry;
 
+// TODO: FIX FAVORITE LOGIC !
 static int readyFavoritePath2(char* rom_path, int type);
 static Entry* Entry_new(char* path, int type) {
 	char display_name[256];
@@ -1688,26 +1689,29 @@ int main (int argc, char *argv[]) {
 					top = Directory_new(Paths.fauxFavDir, selected);
 					top->start = start;
 					top->end = end ? end : ((top->entries->count<Screen.main.list.row_count) ? top->entries->count : Screen.main.list.row_count);
-					
+
 					total = top->entries->count;
-					
+
 					if (total>0) {
-						if (preselected<top->entries->count){
-							top->selected = preselected;
-						}
-						else{
-							top->selected = preselected-1;
-						}
+						// TODO: Figure out why all the favorite logic is so buggy and inconsistent
+						top->selected = 0;
+
+						//if (preselected<top->entries->count){
+						//	top->selected = preselected;
+						//}
+						//else{
+						//	top->selected = preselected-1;
+						//}
 					}
 					else{
 						GFX_blitBodyCopy(screen, "Empty folder", 0,0,Screen.width,Screen.height);
 					}
-					
+
 					SDL_Flip(screen);
 				}
 				readyFavorite(top->entries->items[top->selected]);
 			}
-			
+
 			if (total>0 && Input_justReleased(kButtonResume)) {
 				if (can_resume) {
 					should_resume = 1;
@@ -1736,10 +1740,10 @@ int main (int argc, char *argv[]) {
 				}
 			}
 		}
-		
+
 		unsigned long now = SDL_GetTicks();
 		if (Input_anyPressed()) cancel_start = now;
-		
+
 		#define kChargeDelay 1000
 		if (dirty || now-charge_start>=kChargeDelay) {
 			int is_charging = isCharging();
@@ -1749,7 +1753,7 @@ int main (int argc, char *argv[]) {
 			}
 			charge_start = now;
 		}
-		
+
 		if (power_start && now-power_start>=1000) {
 			powerOff();
 			// return 0; // we should never reach this point

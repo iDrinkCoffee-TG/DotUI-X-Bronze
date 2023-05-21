@@ -1412,7 +1412,8 @@ static void Entry_open(Entry* self) {
 
 static void saveLast(char* path) {
 	// special case for recently played
-	if (exactMatch(top->path, Paths.fauxRecentDir)) {
+	// fav temp fix
+	if (exactMatch(top->path, Paths.fauxRecentDir) || exactMatch(top->path, Paths.fauxFavDir)) {
 		// NOTE: that we don't have to save the file because
 		// your most recently played game will always be at
 		// the top which is also the default selection

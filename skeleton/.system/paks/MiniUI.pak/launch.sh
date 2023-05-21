@@ -57,11 +57,11 @@ mkdir -p "$USERDATA_PATH/.miniui"
 
 # init datetime
 if [ -f "$DATETIME_PATH" ]; then
-	DATETIME=`cat "$DATETIME_PATH"`
-	date +'%F %T' -s "$DATETIME"
-	DATETIME=`date +'%s'`
-	DATETIME=$((DATETIME + 6 * 60 * 60))
-	date -s "@$DATETIME"
+	DATETIME=$(cat "$DATETIME_PATH")
+	if [ -n "$DATETIME" ] && [ "$DATETIME" -eq "$DATETIME" ]; then
+		DATETIME=$((DATETIME + 6 * 60 * 60))
+		date -u +%s -s "@$DATETIME"
+	fi
 fi
 
 # wifi
@@ -94,7 +94,7 @@ while [ -f "$EXEC_PATH" ]; do
 
 	./MiniUI &> "$LOGS_PATH/MiniUI.txt"
 
-	echo `date +'%F %T'` > "$DATETIME_PATH"
+	date -u +%s > "$DATETIME_PATH"
 	sync
 
 	NEXT="/tmp/next"
@@ -107,9 +107,9 @@ while [ -f "$EXEC_PATH" ]; do
 			rm -f "/tmp/using-swap"
 		fi
 
-		echo `date +'%F %T'` > "$DATETIME_PATH"
+		date -u +%s > "$DATETIME_PATH"
 		sync
 	fi
 done
 
-shutdown # just in case
+poweroff # just in case

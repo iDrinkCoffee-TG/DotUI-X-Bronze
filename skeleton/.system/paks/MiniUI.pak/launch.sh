@@ -59,7 +59,9 @@ mkdir -p "$USERDATA_PATH/.miniui"
 if [ -f "$DATETIME_PATH" ]; then
 	DATETIME=$(cat "$DATETIME_PATH")
 	if [ -n "$DATETIME" ] && [ "$DATETIME" -eq "$DATETIME" ]; then
-		DATETIME=$((DATETIME + 6 * 60 * 60))
+		if [ ! -f "$USERDATA_PATH/.wifi/ntp_on.txt" ]; then
+			DATETIME=$((DATETIME + 6 * 60 * 60))
+		fi
 		date -u +%s -s "@$DATETIME"
 	fi
 fi

@@ -1886,21 +1886,12 @@ int main (int argc, char *argv[]) {
 			}
 
 			GFX_blitRule(screen, Screen.main.rule.bottom_y);
-
-			if (show_version || !(can_resume || can_fav || can_unfav)) {
+			if (can_resume && !show_version) {
+				if (strlen(HINT_RESUME)>1) GFX_blitPill(screen, HINT_RESUME, "RESUME", Screen.buttons.left, Screen.buttons.top);
+				else GFX_blitButton(screen, HINT_RESUME, "RESUME", Screen.buttons.left, Screen.buttons.top, Screen.button.text.ox_X);
+			}
+			else {
 				GFX_blitPill(screen, HINT_SLEEP, "SLEEP", Screen.buttons.left, Screen.buttons.top);
-			} else if (can_resume) {
-				int xbutton_x = Screen.buttons.left;
-				if(can_fav && favorites->count<kMaxFavorites) {
-					xbutton_x += Screen.buttons.gutter + GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x85", Screen.buttons.left, Screen.buttons.top, Screen.button.text.ox_Y);
-				} else if (can_unfav) {
-					xbutton_x += Screen.buttons.gutter + GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x86", Screen.buttons.left, Screen.buttons.top, Screen.button.text.ox_Y);
-				}
-				GFX_blitButton(screen, HINT_RESUME, "RESUME", xbutton_x, Screen.buttons.top, Screen.button.text.ox_X);
-			} else if(can_fav && favorites->count<kMaxFavorites) {
-				GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x85", Screen.buttons.left, Screen.buttons.top, Screen.button.text.ox_Y);
-			} else if (can_unfav) {
-				GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x86", Screen.buttons.left, Screen.buttons.top, Screen.button.text.ox_Y);
 			}
 
 			if (show_version) {
@@ -1912,14 +1903,9 @@ int main (int argc, char *argv[]) {
 				}
 			}
 			else {
-				int abutton_width = GFX_blitButton(screen, "A", "OPEN", -Screen.buttons.right, Screen.buttons.top, Screen.button.text.ox_A);
+				int button_width = GFX_blitButton(screen, "A", "OPEN", -Screen.buttons.right, Screen.buttons.top, Screen.button.text.ox_A);
 				if (stack->count>1) {
-					GFX_blitButton(screen, "B", "BACK", -(Screen.buttons.right+abutton_width+Screen.buttons.gutter),Screen.buttons.top, Screen.button.text.ox_B);
-					//if(can_fav && favorites->count<kMaxFavorites) {
-					//	GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x85", -(Screen.buttons.right+abutton_width+Screen.buttons.gutter+bbutton_width+Screen.buttons.gutter), Screen.buttons.top, Screen.button.text.ox_Y);
-					//} else if (can_unfav) {
-					//	GFX_blitButton(screen, HINT_FAV, "\xE2\x98\x86", -(Screen.buttons.right+abutton_width+Screen.buttons.gutter+bbutton_width+Screen.buttons.gutter), Screen.buttons.top, Screen.button.text.ox_Y);
-					//}
+					GFX_blitButton(screen, "B", "BACK", -(Screen.buttons.right+button_width+Screen.buttons.gutter),Screen.buttons.top, Screen.button.text.ox_B);
 				}
 			}
 		}

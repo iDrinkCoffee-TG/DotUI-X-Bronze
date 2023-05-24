@@ -17,6 +17,7 @@ static SDL_Surface* screen;
 static SDL_Surface* slot_overlay;
 static SDL_Surface* slot_dots;
 static SDL_Surface* slot_dot_selected;
+static SDL_Surface* slot_dot_resume;
 static SDL_Surface* arrow;
 static SDL_Surface* arrow_highlighted;
 static SDL_Surface* no_preview;
@@ -58,6 +59,7 @@ __attribute__((constructor)) static void init(void) {
 	slot_overlay = GFX_loadImage("slot-overlay.png");
 	slot_dots = GFX_loadImage("slot-dots.png");
 	slot_dot_selected = GFX_loadImage("slot-dot-selected.png");
+	slot_dot_resume = GFX_loadImage("slot-dot-resume.png");
 	arrow = GFX_loadImage("arrow.png");
 	arrow_highlighted = GFX_loadImage("arrow-highlighted.png");
 	no_preview = GFX_getText("No Preview", 0, 1);
@@ -68,6 +70,7 @@ __attribute__((destructor)) static void quit(void) {
 	SDL_FreeSurface(slot_overlay);
 	SDL_FreeSurface(slot_dots);
 	SDL_FreeSurface(slot_dot_selected);
+	SDL_FreeSurface(slot_dot_resume);
 	SDL_FreeSurface(arrow);
 	SDL_FreeSurface(arrow_highlighted);
 	SDL_FreeSurface(no_preview);
@@ -761,7 +764,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 
 				SDL_BlitSurface(slot_overlay, NULL, screen, &preview_rect);
 				SDL_BlitSurface(slot_dots, NULL, screen, &(SDL_Rect){Screen.menu.slots.x,Screen.menu.slots.y});
-				SDL_BlitSurface(slot_dot_selected, NULL, screen, &(SDL_Rect){Screen.menu.slots.x+(Screen.menu.slots.ox*slot),Screen.menu.slots.y});
+				SDL_BlitSurface(exists(slot_path) && slot == getInt(slot_path) ? slot_dot_resume : slot_dot_selected, NULL, screen, &(SDL_Rect){Screen.menu.slots.x+(Screen.menu.slots.ox*slot),Screen.menu.slots.y});
 			}
 
 			if (state_delete == 2) {

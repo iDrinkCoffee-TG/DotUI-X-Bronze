@@ -251,16 +251,16 @@ static MenuReturnStatus SaveLoad(char* rom_path, char* save_path_template, SDL_S
 	if (requested_state==kRequestSave) {
 		if (!optional_snapshot) optional_snapshot = SDL_GetVideoSurface();
 
-		char bmp_path[256];
-		sprintf(bmp_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
+		char thumb_path[256];
+		sprintf(thumb_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
 	
 		status = kStatusSaveSlot + slot;
 		SDL_Surface* preview = createThumbnail(optional_snapshot);
-		SDL_RWops* out = SDL_RWFromFile(bmp_path, "wb");
+		SDL_RWops* out = SDL_RWFromFile(thumb_path, "wb");
 		if (total_discs) {
 			char* disc_path = disc_paths[disc];
 			putFile(txt_path, disc_path + strlen(base_path));
-			sprintf(bmp_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
+			sprintf(thumb_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
 		}
 		SDL_SaveBMP_RW(preview, out, 1);
 		SDL_FreeSurface(preview);
@@ -458,8 +458,9 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 		if (requested_state==kRequestPowerOff) return kStatusPowerOff;
 	}
 	
+	// TODO: snprintf all these
 	char save_path[256];
-	char bmp_path[256];
+	char thumb_path[256];
 	char txt_path[256];
 	int save_exists = 0;
 	int preview_exists = 0;
@@ -467,6 +468,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 	int quit = 0;
 	int dirty = 1;
 	int show_setting = 0; // 1=brightness,2=volume
+	int state_delete = 0;
 	int setting_value = 0;
 	int setting_min = 0;
 	int setting_max = 0;
@@ -520,13 +522,16 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 		
 		if (dirty && state_support && (selected==kItemSave || selected==kItemLoad)) {
 			sprintf(save_path, save_path_template, slot);
-			sprintf(bmp_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
+			sprintf(thumb_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
 			sprintf(txt_path, "%s/%s.%d.txt", mmenu_dir, rom_file, slot);
 		
 			save_exists = exists(save_path);
-			preview_exists = save_exists && exists(bmp_path);
+			preview_exists = save_exists && exists(thumb_path);
 			// printf("save_path: %s (%i)\n", save_path, save_exists);
-			// printf("bmp_path: %s (%i)\n", bmp_path, preview_exists);
+			// printf("thumb_path: %s (%i)\n", thumb_path, preview_exists);
+			// printf("txt_path: %s (%i)\n", save_path, exists(txt_path));
+			// printf("slot_path: %s (%i)\n", slot_path, exists(slot_path));
+			// printf("slot: %i (%i)\n", slot, (exists(slot_path) && slot == getInt(slot_path)));
 		}
 		
 		if ((Input_justPressed(kButtonB) || Input_justReleased(kButtonMenu)) && !dirty && show_setting == 0) {
@@ -552,11 +557,11 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 				if (state_support) {
 					status = kStatusSaveSlot + slot;
 					SDL_Surface* preview = createThumbnail(optional_snapshot ? optional_snapshot : copy);
-					SDL_RWops* out = SDL_RWFromFile(bmp_path, "wb");
+					SDL_RWops* out = SDL_RWFromFile(thumb_path, "wb");
 					if (total_discs) {
 						char* disc_path = disc_paths[disc];
 						putFile(txt_path, disc_path + strlen(base_path));
-						sprintf(bmp_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
+						sprintf(thumb_path, "%s/%s.%d.bmp", mmenu_dir, rom_file, slot);
 					}
 					SDL_SaveBMP_RW(preview, out, 1);
 					SDL_FreeSurface(preview);
@@ -593,7 +598,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 			}
 			if (quit) break;
 		}
-		
+
 		unsigned long now = SDL_GetTicks();
 		if (Input_anyPressed()) cancel_start = now;
 
@@ -629,6 +634,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 		
 		int old_setting = show_setting;
 		int old_value = setting_value;
+		int old_delete = state_delete;
 		show_setting = 0;
 		if (Input_isPressed(kButtonStart) && Input_isPressed(kButtonSelect)) {
 			// buh
@@ -650,17 +656,45 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 			setting_value = GetVolume();
 			setting_min = MIN_VOLUME;
 			setting_max = MAX_VOLUME;
+		} else if (select_was_pressed && save_exists && state_support && selected==kItemSave) {
+			// TODO: mark the current 'resume slot' as special,
+			//       maybe with a different colored dot
+			if (!state_delete) {
+				state_delete = 1;
+			}
+			else if (Input_justPressed(kButtonY)) {
+				if (state_delete == 2) {
+					char bmp_path[256];
+					state_delete = 0;
+					unlink(save_path);
+					save_exists = 0;
+					if (preview_exists) {
+						unlink(thumb_path);
+						preview_exists = 0;
+					}
+					if (exists(txt_path)) unlink(txt_path);
+					if (exists(slot_path) && slot == getInt(slot_path)) unlink(slot_path);
+					sprintf(bmp_path, "%s.bmp", save_path);
+					if (exists(bmp_path)) unlink(bmp_path);
+				} else {
+					state_delete = 2;
+				}
+			}
+		}
+		else {
+			state_delete = 0;
 		}
 
 		if (old_setting && !show_setting) setting_start = SDL_GetTicks();
 
-		if (old_value != setting_value) dirty = 1;
+		if (old_delete != state_delete) dirty = 1;
+		else if (old_value != setting_value) dirty = 1;
 		else if (!old_setting && show_setting) dirty = 1;
 		else if (setting_start > 0 && SDL_GetTicks() - setting_start > 500) {
 			dirty = 1;
 			setting_start = 0;
 		}
-		
+
 		if (dirty) {
 			dirty = 0;
 			SDL_BlitSurface(cache, NULL, screen, NULL);
@@ -682,14 +716,14 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 					SDL_FillRect(screen, &(SDL_Rect){Screen.menu.window.x,Screen.menu.list.y+(i*Screen.menu.list.line_height)-((Screen.menu.list.row_height-Screen.menu.list.line_height)/2),Screen.menu.window.width,Screen.menu.list.row_height}, bg_color_rgb);
 					if (!disabled) color = 0; // white
 				}
-				
+
 				GFX_blitText(screen, item, 2, Screen.menu.list.x, Screen.menu.list.y+(i*Screen.menu.list.line_height)+Screen.menu.list.oy, 0, color, i==selected);
-				
+
 				if ((state_support && (i==kItemSave || i==kItemLoad)) || (total_discs>1 && i==kItemContinue)) {
 					SDL_BlitSurface(i==selected?arrow_highlighted:arrow, NULL, screen, &(SDL_Rect){Screen.menu.window.x+Screen.menu.window.width-(arrow->w+Screen.menu.arrow.ox),Screen.menu.list.y+(i*Screen.menu.list.line_height)+Screen.menu.arrow.oy});
 				}
 			}
-			
+
 			// disc change
 			if (total_discs>1 && selected==kItemContinue) {
 				GFX_blitWindow(screen, Screen.menu.preview.x, Screen.menu.preview.y, Screen.menu.preview.width, Screen.menu.list.row_height+(Screen.menu.disc.oy*2), 1);
@@ -702,7 +736,7 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 				GFX_blitWindow(screen, Screen.menu.preview.x, Screen.menu.preview.y, Screen.menu.preview.width, Screen.menu.preview.height, 1);
 				
 				if (preview_exists) { // has save, has preview
-					SDL_Surface* preview = IMG_Load(bmp_path);
+					SDL_Surface* preview = IMG_Load(thumb_path);
 					if (!preview) printf("IMG_Load: %s\n", IMG_GetError());
 					SDL_BlitSurface(preview, NULL, screen, &preview_rect);
 					SDL_FreeSurface(preview);
@@ -724,21 +758,28 @@ MenuReturnStatus ShowMenu(char* rom_path, char* save_path_template, SDL_Surface*
 						});
 					}
 				}
-				
+
 				SDL_BlitSurface(slot_overlay, NULL, screen, &preview_rect);
 				SDL_BlitSurface(slot_dots, NULL, screen, &(SDL_Rect){Screen.menu.slots.x,Screen.menu.slots.y});
 				SDL_BlitSurface(slot_dot_selected, NULL, screen, &(SDL_Rect){Screen.menu.slots.x+(Screen.menu.slots.ox*slot),Screen.menu.slots.y});
 			}
-			
-			GFX_blitPill(screen, HINT_SLEEP, "SLEEP", Screen.buttons.left, Screen.menu.buttons.top);
+
+			if (state_delete == 2) {
+				GFX_blitButton(screen, "Y", "DELETE !", Screen.buttons.left ,Screen.menu.buttons.top, Screen.button.text.ox_Y);
+			} else if (state_delete == 1) {
+				GFX_blitButton(screen, "Y", "DELETE", Screen.buttons.left ,Screen.menu.buttons.top, Screen.button.text.ox_Y);
+			}
+			else {
+				GFX_blitPill(screen, HINT_SLEEP, "SLEEP", Screen.buttons.left, Screen.menu.buttons.top);
+			}
 			// TODO: change ACT to OKAY?
 			int button_width = GFX_blitButton(screen, "A", "ACT", -Screen.buttons.right, Screen.menu.buttons.top, Screen.button.text.ox_A);
 			GFX_blitButton(screen, "B", "BACK", -(Screen.buttons.right+button_width+Screen.buttons.gutter),Screen.menu.buttons.top, Screen.button.text.ox_B);
 			// TODO: /can this be cached?
-			
+
 			SDL_Flip(screen);
 		}
-		
+
 		// slow down to 60fps
 		unsigned long frame_duration = SDL_GetTicks() - frame_start;
 		#define kTargetFrameDuration 17

@@ -55,7 +55,7 @@ export LDFLAGS="-Wl,-s -Wl,--gc-sections"
 if [ ! -f "openssl-1.0.0t/libssl.so.1.0.0" ] || [ ! -f "openssl-1.0.0t/libcrypto.so.1.0.0" ]; then
 	test -d openssl-1.0.0t || tar xzf openssl-1.0.0t.tar.gz || exit $?
 	cd openssl-1.0.0t || exit $?
-	./configure shared linux-generic32 || exit $?
+	./Configure shared linux-generic32 || exit $?
 	make || exit $?
 	cd ..
 fi

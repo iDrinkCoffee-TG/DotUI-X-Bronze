@@ -44,6 +44,7 @@ lib:
 
 deps:
 	cd ./third-party/deps && ./make-deps.sh
+	cd ./third-party/minizip && make miniunz
 
 sdl: lib
 	cd ./third-party/SDL-1.2 && ./make.sh
@@ -95,6 +96,7 @@ payload: deps
 	cp ./third-party/SDL-1.2/build/.libs/libSDL-1.2.so.0.11.5 ./build/PAYLOAD/.system/lib/libSDL-1.2.so.0
 	cp ./third-party/deps/tiny-curl-7.72.0/lib/.libs/libcurl.so.4.6.0 ./build/PAYLOAD/.system/lib/libcurl.so.4
 	cp ./third-party/deps/tiny-curl-7.72.0/src/.libs/curl ./build/PAYLOAD/.system/bin/
+	cp ./third-party/minizip/miniunz ./build/PAYLOAD/.system/bin/
 	cp ./src/batmon/batmon ./build/PAYLOAD/.system/bin/
 	cp ./src/keymon/keymon ./build/PAYLOAD/.system/bin/
 	cp ./src/lumon/lumon ./build/PAYLOAD/.system/bin/
@@ -109,6 +111,7 @@ payload: deps
 	cp ./src/oss/oss ./build/PAYLOAD/.system/bin/
 	cp ./src/say/say ./build/PAYLOAD/miyoo354/app/
 	cp ./src/blank/blank ./build/PAYLOAD/miyoo354/app/
+	cp ./third-party/minizip/miniunz ./build/PAYLOAD/miyoo354/app/
 	cp ./third-party/picoarch/output/picoarch ./build/PAYLOAD/.system/bin/
 	cp ./third-party/picoarch/output/fceumm_libretro.so ./build/PAYLOAD/.system/cores/
 	cp ./third-party/picoarch/output/gambatte_libretro.so ./build/PAYLOAD/.system/cores/
@@ -184,6 +187,7 @@ clean:
 	cd ./src/keyboard && make clean
 	cd ./src/oss && make clean
 	cd ./third-party/deps && ./make-deps.sh clean
+	cd ./third-party/minizip && make clean
 	cd ./third-party/DinguxCommander && make clean
 	cd ./third-party/latency_reduction && make clean
 	cd ./third-party/logotweak/logomake && make clean

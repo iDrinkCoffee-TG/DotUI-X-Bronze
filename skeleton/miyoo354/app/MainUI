@@ -41,7 +41,7 @@ fi
 # then do it
 ./blank
 ./say "$VERB DotUI"
-unzip -o "/mnt/SDCARD/miyoo354/app/MiniUI.zip" -d "/mnt/SDCARD"
+./miniunz -x -o "/mnt/SDCARD/miyoo354/app/MiniUI.zip" -d "/mnt/SDCARD/"
 
 # post-install
 POST_INSTALL=/mnt/SDCARD/.system/post-install.sh
@@ -66,6 +66,8 @@ fi
 ./say "$NOUN complete"
 
 rm -rf "$OLD_SYSTEM_PATH"
+rm -rf /tmp/MainUI.old
+mv MainUI /tmp/MainUI.old
 rm -rf /mnt/SDCARD/miyoo354
 
 # } > /mnt/SDCARD/miyoo.txt 2>&1

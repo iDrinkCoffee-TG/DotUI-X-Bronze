@@ -41,6 +41,10 @@ lib:
 	cd ./src/libmsettings && make
 	cd ./src/libmmenu && make
 	cd ./third-party/latency_reduction && make
+
+deps:
+	cd ./third-party/deps && ./make-deps.sh
+
 sdl: lib
 	cd ./third-party/SDL-1.2 && ./make.sh
 
@@ -75,7 +79,7 @@ readmes:
 	fmt -w 40 -s ./skeleton//README.txt > ./build/PAYLOAD/README.txt
 	fmt -w 40 -s ./extras//README.txt > ./build/EXTRAS/README.txt
 
-payload:
+payload: deps
 	rm -rf ./build
 	mkdir -p ./releases
 	mkdir -p ./build
@@ -89,6 +93,8 @@ payload:
 	cp ./third-party/latency_reduction/as_preload.so ./build/PAYLOAD/.system/lib/
 	cp ./third-party/latency_reduction/audioserver.mod ./build/PAYLOAD/.system/bin/
 	cp ./third-party/SDL-1.2/build/.libs/libSDL-1.2.so.0.11.5 ./build/PAYLOAD/.system/lib/libSDL-1.2.so.0
+	cp ./third-party/deps/tiny-curl-7.72.0/lib/.libs/libcurl.so.4.6.0 ./build/PAYLOAD/.system/lib/libcurl.so.4
+	cp ./third-party/deps/tiny-curl-7.72.0/src/.libs/curl ./build/PAYLOAD/.system/bin/
 	cp ./src/batmon/batmon ./build/PAYLOAD/.system/bin/
 	cp ./src/keymon/keymon ./build/PAYLOAD/.system/bin/
 	cp ./src/lumon/lumon ./build/PAYLOAD/.system/bin/
@@ -177,6 +183,7 @@ clean:
 	cd ./src/clock && make clean
 	cd ./src/keyboard && make clean
 	cd ./src/oss && make clean
+	cd ./third-party/deps && ./make-deps.sh clean
 	cd ./third-party/DinguxCommander && make clean
 	cd ./third-party/latency_reduction && make clean
 	cd ./third-party/logotweak/logomake && make clean

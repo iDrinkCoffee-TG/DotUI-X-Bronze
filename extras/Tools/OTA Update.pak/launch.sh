@@ -1,5 +1,12 @@
 #!/bin/sh
 
+zipvalid() {
+	if [ "$(hexdump -n 4 -e '1/4 "%u"' "$1" 2> /dev/null)" = "67324752" ]; then
+		return 0
+	fi
+	return 1
+}
+
 say "Checking for update ..."
 
 cd "$(dirname "$0")"
@@ -55,12 +62,15 @@ if ! [ "$(df -m /mnt/SDCARD/ | tail -1 | awk '{print $(NF-2);exit}')" -gt 100 ] 
 	exit 0
 fi
 
-progress 33 "Downloading update ..."
+progress 25 "Downloading update ..."
 
 BASE_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-base.zip"
 EXTRAS_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-extras.zip"
-curl --silent -f -m 600 -L -k -o update-base.zip "$BASE_URL"
-test $? -eq 0 && curl --silent -f -m 600 -L -k -o update-extras.zip "$EXTRAS_URL"
+curl --silent -f --connect-timeout 30 -m 600 -L -k -o update-base.zip "$BASE_URL" && \
+zipvalid "update-base.zip" && 
+progress 50 "Downloading update ..." && \
+curl --silent -f --connect-timeout 30 -m 600 -L -k -o update-extras.zip "$EXTRAS_URL" && \
+zipvalid "update-extras.zip"
 if [ $? -ne 0 ] || [ ! -f update-base.zip ] || [ ! -f update-extras.zip ]; then
 	progress quit
 	wait $PROG_PID
@@ -70,7 +80,7 @@ if [ $? -ne 0 ] || [ ! -f update-base.zip ] || [ ! -f update-extras.zip ]; then
 	exit 0
 fi
 
-progress 66 "Extracting update ..."
+progress 75 "Extracting update ..."
 
 # kill all extras here
 killall dropbear

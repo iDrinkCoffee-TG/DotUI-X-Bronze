@@ -143,6 +143,7 @@ void ShowWarning(void) {
 		SDL_Delay(200);
 	}
 	SDL_FreeSurface(okay);
+	GFX_clear();
 }
 
 // TODO: look at common data between SaveLoad and ShowMenu and determine which can be determined once and cached

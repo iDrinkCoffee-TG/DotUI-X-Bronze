@@ -61,7 +61,7 @@ BASE_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-b
 EXTRAS_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-extras.zip"
 curl --silent -m 600 -L -k -o update-base.zip "$BASE_URL"
 test $? -eq 0 && curl --silent -m 600 -L -k -o update-extras.zip "$EXTRAS_URL"
-if [ ! -f update-base.zip ] || [ ! -f update-extras.zip ]; then
+if [ $? -ne 0 ] || [ ! -f update-base.zip ] || [ ! -f update-extras.zip ]; then
 	progress quit
 	wait $PROG_PID
 	show okay.png

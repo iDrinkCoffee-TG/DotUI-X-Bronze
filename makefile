@@ -33,7 +33,7 @@ ifeq "$(GCC_VER_GTE9_0)" "1"
   BUNDLE_LIBS=bundle
 endif
 
-all: lib sdl core emu tools payload readmes $(BUNDLE_LIBS) zip
+all: lib sdl deps core emu tools payload readmes $(BUNDLE_LIBS) zip
 
 extras: emu tools
 
@@ -41,6 +41,7 @@ lib:
 	cd ./src/libmsettings && make
 	cd ./src/libmmenu && make
 	cd ./third-party/latency_reduction && make
+	cd ./third-party/libmamedb && make
 
 deps:
 	cd ./third-party/deps && ./make-deps.sh
@@ -80,7 +81,7 @@ readmes:
 	fmt -w 40 -s ./skeleton//README.txt > ./build/PAYLOAD/README.txt
 	fmt -w 40 -s ./extras//README.txt > ./build/EXTRAS/README.txt
 
-payload: deps
+payload:
 	rm -rf ./build
 	mkdir -p ./releases
 	mkdir -p ./build
@@ -97,6 +98,7 @@ payload: deps
 	cp ./third-party/deps/tiny-curl-7.72.0/lib/.libs/libcurl.so.4.6.0 ./build/PAYLOAD/.system/lib/libcurl.so.4
 	cp ./third-party/deps/tiny-curl-7.72.0/src/.libs/curl ./build/PAYLOAD/.system/bin/
 	cp ./third-party/minizip/miniunz ./build/PAYLOAD/.system/bin/
+	cp ./third-party/libmamedb/libmamedb.so ./build/PAYLOAD/.system/lib/
 	cp ./src/batmon/batmon ./build/PAYLOAD/.system/bin/
 	cp ./src/keymon/keymon ./build/PAYLOAD/.system/bin/
 	cp ./src/lumon/lumon ./build/PAYLOAD/.system/bin/
@@ -131,6 +133,7 @@ payload: deps
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
 	cp ./third-party/picoarch/output/smsplus-gx_libretro.so ./build/EXTRAS/Emus/GG.pak/smsplus_libretro.so
+	cp ./third-party/picoarch/output/mame2000_libretro.so ./build/EXTRAS/Emus/MAME.pak/
 	cp ./third-party/picoarch/output/prboom_libretro.so ./build/EXTRAS/Emus/DOOM.pak/
 	cp ./third-party/picoarch/cores/prboom/prboom.wad ./build/EXTRAS/Bios/DOOM/
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
@@ -168,7 +171,7 @@ zip:
 	echo "$(RELEASE_NAME)" > ./build/latest.txt
 
 rezip: payload $(BUNDLE_LIBS) zip
-	
+
 clean:
 	rm -rf ./build
 	cd ./src/libmsettings && make clean
@@ -188,6 +191,7 @@ clean:
 	cd ./src/oss && make clean
 	cd ./third-party/deps && ./make-deps.sh clean
 	cd ./third-party/minizip && make clean
+	cd ./third-party/libmamedb && make clean
 	cd ./third-party/DinguxCommander && make clean
 	cd ./third-party/latency_reduction && make clean
 	cd ./third-party/logotweak/logomake && make clean

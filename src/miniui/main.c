@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <dlfcn.h>
 
 #include "../common/common.h"
 
@@ -123,11 +124,30 @@ typedef struct Entry {
 	int use_alt;
 } Entry;
 
+static int isMameDir(char* path) {
+	char emu_name[256];
+	getEmuName(path, emu_name);
+	return exactMatch(emu_name, "MAME");
+}
+
+static void* libmamedb = 0;
+static char* (*_mamedb_en)(char* name) = (void*)-1;
+static char* getMameName(char* display_name) {
+	if (_mamedb_en == (void*)-1) {
+		if (!libmamedb) libmamedb = dlopen("libmamedb.so", RTLD_LAZY);
+		if (libmamedb) _mamedb_en = dlsym(libmamedb, "mamedb_en");
+		else _mamedb_en = 0;
+	}
+	if (_mamedb_en) _mamedb_en(display_name);
+	return display_name;
+}
+
 // TODO: FIX FAVORITE LOGIC !
 static int readyFavoritePath2(char* rom_path, int type);
 static Entry* Entry_new(char* path, int type) {
 	char display_name[256];
 	getDisplayName(path, display_name);
+	if (isMameDir(path)) getMameName(display_name);
 	Entry* self = malloc(sizeof(Entry));
 	self->path = strdup(path);
 	self->name = (char*)malloc(strlen(display_name)+5);

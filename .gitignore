@@ -52,8 +52,9 @@ logomake
 !logomake/
 logowrite
 !logowrite/
+miniunz
+!miniunz/
 
-third-party/deps/openssl-1.0.0t/
-third-party/deps/tiny-curl-7.72.0/
+/third-party/deps/**/
 
 # NOTE: this eats miyoo/app/keymon, had to add extension then remove it in makefile

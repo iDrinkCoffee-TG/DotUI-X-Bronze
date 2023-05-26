@@ -22,7 +22,7 @@ if ! (ip route get 1.1.1.1); then
 fi
 
 MY_VERSION="$(cat /mnt/SDCARD/.system/paks/MiniUI.pak/version.txt | head -1 | cut -d- -f3-)"
-TAG="$(curl --silent -m 30 -L -k "https://api.github.com/repos/anzz1/DotUI-X/releases/latest" | grep '"tag_name":' | sed -r 's/.*"([^"]+)".*/\1/')"
+TAG="$(curl --silent -f -m 30 -L -k "https://api.github.com/repos/anzz1/DotUI-X/releases/latest" | grep '"tag_name":' | sed -r 's/.*"([^"]+)".*/\1/')"
 
 if [ -z "$TAG" ]; then
 	show okay.png
@@ -59,8 +59,8 @@ progress 33 "Downloading update ..."
 
 BASE_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-base.zip"
 EXTRAS_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-extras.zip"
-curl --silent -m 600 -L -k -o update-base.zip "$BASE_URL"
-test $? -eq 0 && curl --silent -m 600 -L -k -o update-extras.zip "$EXTRAS_URL"
+curl --silent -f -m 600 -L -k -o update-base.zip "$BASE_URL"
+test $? -eq 0 && curl --silent -f -m 600 -L -k -o update-extras.zip "$EXTRAS_URL"
 if [ $? -ne 0 ] || [ ! -f update-base.zip ] || [ ! -f update-extras.zip ]; then
 	progress quit
 	wait $PROG_PID

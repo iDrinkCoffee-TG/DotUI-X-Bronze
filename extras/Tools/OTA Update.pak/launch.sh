@@ -86,8 +86,22 @@ progress 75 "Extracting update ..."
 killall dropbear
 
 mv launch.sh launch.sh.old
-miniunz -x -o "update-base.zip" -d "/mnt/SDCARD/"
+miniunz -x -o "update-base.zip" -d "/mnt/SDCARD/" && \
 miniunz -x -o "update-extras.zip" -d "/mnt/SDCARD/"
+
+if [ $? -ne 0 ]; then
+	rm -rf launch.sh
+	mv launch.sh.old launch.sh
+	rm -rf /mnt/SDCARD/miyoo354
+	sync
+	progress quit
+	wait $PROG_PID
+	show okay.png
+	say "Update extraction failed."
+	confirm any
+	exit 0
+fi
+
 rm -f "update-base.zip"
 rm -f "update-extras.zip"
 sync
@@ -97,6 +111,5 @@ sleep 2
 progress quit
 
 while true; do
-	reboot
-	sleep 10
+	sync && reboot && sleep 10
 done

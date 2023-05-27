@@ -1,5 +1,15 @@
 #!/bin/sh
 
+update_fail() {
+	./blank
+	./say "DotUI installation files missing!"$'\n'"Please reinstall them to the SD card."$'\n\n'"Press any key to power off."
+	read -n1 < /dev/input/event0
+	sleep 1
+	while true; do
+		sync && poweroff && sleep 10
+	done
+}
+
 # {
 	
 DIR=/mnt/SDCARD/miyoo354/app
@@ -25,23 +35,41 @@ export LD_LIBRARY_PATH=/lib:/config/lib:/customer/lib
 SYSTEM_PATH=/mnt/SDCARD/.system
 OLD_SYSTEM_PATH=/mnt/SDCARD/.system_old
 
+if [ ! -f "/mnt/SDCARD/miyoo354/app/MiniUI.zip" ] || [ -z "$(./miniunz 2> /dev/null)" ] || [ "$(hexdump -n 4 -e '1/4 "%u"' "/mnt/SDCARD/miyoo354/app/MiniUI.zip" 2> /dev/null)" != "67324752" ]; then
+	update_fail
+fi
+
+./blank
+
 # figure out what we're doing here
 if [ -d "$SYSTEM_PATH" ]; then
-	rm -rf "/mnt/SDCARD/.tmp_update"
-	mv "$SYSTEM_PATH" "$OLD_SYSTEM_PATH"
-	VERB=Updating
+	./say "Updating DotUI"
 	NOUN=Update
 	JUST_UPDATED=1
+	rm -rf /tmp/updater.old
+	mv /mnt/SDCARD/.tmp_update/updater /tmp/updater.old
+	rm -rf "/mnt/SDCARD/.tmp_update"
+	rm -rf "$OLD_SYSTEM_PATH"
+	mv "$SYSTEM_PATH" "$OLD_SYSTEM_PATH"
 else
-	VERB=Installing
+	./say "Installing DotUI"
 	NOUN=Installation
 	JUST_INSTALLED=1
 fi
 
 # then do it
-./blank
-./say "$VERB DotUI"
-./miniunz -x -o "/mnt/SDCARD/miyoo354/app/MiniUI.zip" -d "/mnt/SDCARD/"
+./miniunz -x -o "/mnt/SDCARD/miyoo354/app/MiniUI.zip" -d "/mnt/SDCARD/" && test -f "/mnt/SDCARD/.tmp_update/updater"
+if [ $? -ne 0 ]; then
+	if [ ! -z "$JUST_UPDATED" ]; then
+		rm -rf "$SYSTEM_PATH"
+		mv "$OLD_SYSTEM_PATH" "$SYSTEM_PATH"
+		rm -rf "/mnt/SDCARD/.tmp_update"
+		mkdir -p "/mnt/SDCARD/.tmp_update"
+		mv /tmp/updater.old /mnt/SDCARD/.tmp_update/updater
+	fi
+
+	update_fail
+fi
 
 # post-install
 POST_INSTALL=/mnt/SDCARD/.system/post-install.sh
@@ -69,6 +97,7 @@ rm -rf "$OLD_SYSTEM_PATH"
 rm -rf /tmp/MainUI.old
 mv MainUI /tmp/MainUI.old
 rm -rf /mnt/SDCARD/miyoo354
+sync
 
 # } > /mnt/SDCARD/miyoo.txt 2>&1
 

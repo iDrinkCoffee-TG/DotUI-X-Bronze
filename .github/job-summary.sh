@@ -15,11 +15,7 @@ update() {
 		cd "$d"
 		if [ -d ".git" ] || [ -f ".git" ]; then
 			commit=$(git rev-parse HEAD)
-			if [ "$(basename $PWD)" == "vvvvvv" ]; then # TODO: fix vvvvvv and remove the condition
-				echo "| $(basename $PWD) | Fail :x: | [${commit:0:8}]($(git config --get remote.origin.url | sed -e 's/\/$\|\.git$//g')/commit/$commit)"
-			else
-				echo "| $(basename $PWD) | Pass :heavy_check_mark: | [${commit:0:8}]($(git config --get remote.origin.url | sed -e 's/\/$\|\.git$//g')/commit/$commit)"
-			fi
+			echo "| $(basename $PWD) | Pass :heavy_check_mark: | [${commit:0:8}]($(git config --get remote.origin.url | sed -e 's/\/$\|\.git$//g')/commit/$commit)"
 			update *
 		fi
 		cd ..

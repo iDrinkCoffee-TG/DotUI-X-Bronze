@@ -12,7 +12,7 @@
 	branch = miniui-miyoomini
 [submodule "third-party/vvvvvv"]
 	path = third-party/vvvvvv
-	url = https://github.com/shauninman/VVVVVV.git
+	url = https://github.com/anzz1/vvvvvv.git
 	branch = miniui-miyoomini
 [submodule "third-party/st-sdl"]
 	path = third-party/st-sdl

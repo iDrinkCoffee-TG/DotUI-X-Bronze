@@ -10,7 +10,7 @@
 `docker pull anzz1/miyoomini-toolchain:latest`
 
 2. Boot to the image  
-`docker run -it --rm -v $HOME/workspace:/root/workspace mholdg16/miyoomini-toolchain:latest /bin/bash`
+`docker run -it --rm -v $HOME/workspace:/root/workspace anzz1/miyoomini-toolchain:latest /bin/bash`
 
 #### B) Using [Vagrant](https://developer.hashicorp.com/vagrant/) / [VirtualBox](https://www.virtualbox.org/) (Windows, x86_64)
 

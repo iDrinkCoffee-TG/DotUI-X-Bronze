@@ -6,7 +6,7 @@ While stability remains a focus, releases will be rolling and bugs can be expect
 Consider this a development branch, while the main DotUI repository is the stable one.  
 The integration of DotUI-X features into the upstream DotUI repository shall be at the sole discretion of the DotUI maintainers.
 
-**For Users**: Please check the [wiki](wiki) for installation instructions. Don't worry, it's simple !
+**For Users**: Please check the [wiki](https://github.com/anzz1/DotUI-X/wiki) for installation instructions. Don't worry, it's simple !
 
 **For Developers**: Refer to [BUILD.md](BUILD.md) for build instructions.
 

@@ -47,8 +47,8 @@ fi
 if [ "$DOWNLOAD" = "1" ]; then
 	progress 33 "Downloading data ..."
 	curl --silent -f --connect-timeout 30 -m 600 -L -k -o cavestoryen.zip "$DATA_URL" && \
-	zipvalid "cavestoryen.zip" && 
-	if [ $? -ne 0 ] || [ ! -f cavestoryen.zip ]; then
+	zipvalid "cavestoryen.zip"
+	if [ $? -ne 0 ] || [ ! -f ./cavestoryen.zip ]; then
 		rm -rf cavestoryen.zip
 		sync
 		progress quit
@@ -76,7 +76,7 @@ if [ $? -ne 0 ] || [ ! -f ./CaveStory/Doukutsu.exe ] || [ ! -d ./CaveStory/data 
 	exit 1
 fi
 
-rm -rf cavestoryen.zip
+# rm -rf cavestoryen.zip
 sync
 progress 100 "Launching game ..."
 sleep 2

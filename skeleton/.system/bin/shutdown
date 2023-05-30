@@ -3,4 +3,4 @@
 if [ ! -z "$DATETIME_PATH" ]; then
 	date -u +%s > "$DATETIME_PATH"
 fi
-sync && halt && poweroff && sleep 10
+sync && poweroff && sleep 10

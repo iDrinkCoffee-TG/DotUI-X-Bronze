@@ -1,6 +1,6 @@
 #!/bin/sh
 
-EMU_EXE=mgba
+EMU_EXE=mgba_sgb
 PERF_LEVEL=performance
 CORES_PATH=$(dirname "$0")
 

@@ -1,7 +1,7 @@
 5e600602  DinguxCommander
 c57a554b  SDL-1.2
 c320273d  dropbear-embedded
-fb7d4e59  picoarch
+ee40c1cc  picoarch
 76e45c34  libpicofe
 88252880  libretro-common
 15efb9df  st-sdl
@@ -15,7 +15,8 @@ ad2c71d8  fceumm
 a9376c86  gpsp
 720b8ad4  mame2000
 75c658cc  mednafen_supafaust
-314bf7b6  mgba
+5d48e074  mgba
+5d48e074  mgba_sgb
 1f371e51  nxengine
 1ebc39a1  pcsx_rearmed
 44a6c678  picodrive

@@ -894,13 +894,17 @@ int preventAutosleep(void) {
 
 void powerOff(void) {
 	if (can_poweroff) {
+		pid_t pid = -1;
 		char* msg = exists(kAutoResumePath) ? "Quicksave created,\npowering off" : "Powering off";
 		SDL_FillRect(screen, NULL, 0);
 		GFX_blitBodyCopy(screen, msg, 0,0,Screen.width,Screen.height);
 		SDL_Flip(screen);
 		sleep(1);
-		system("shutdown");
-		while (1) pause();
+		while (pid < 0) {
+			pid = vfork();
+		}
+		if (pid == 0) execlp("shutdown", "shutdown", NULL);
+		_exit(0);
 	}
 }
 

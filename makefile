@@ -130,7 +130,7 @@ payload:
 	cp ./third-party/picoarch/output/beetle-supergrafx_libretro.so ./build/EXTRAS/Emus/SGX.pak/mednafen_supergrafx_libretro.so
 	cp ./third-party/picoarch/output/pokemini_libretro.so ./build/EXTRAS/Emus/PKM.pak/
 	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/MGBA.pak/
-	cp ./third-party/picoarch/output/mgba_libretro.so ./build/EXTRAS/Emus/SGB.pak/
+	cp ./third-party/picoarch/output/mgba_sgb_libretro.so ./build/EXTRAS/Emus/SGB.pak/
 	cp ./third-party/picoarch/output/fake-08_libretro.so ./build/EXTRAS/Emus/P8.pak/
 	cp ./third-party/picoarch/output/smsplus-gx_libretro.so ./build/EXTRAS/Emus/GG.pak/smsplus_libretro.so
 	cp ./third-party/picoarch/output/mame2000_libretro.so ./build/EXTRAS/Emus/MAME.pak/

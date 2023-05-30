@@ -200,8 +200,12 @@ int main (int argc, char *argv[]) {
 
 		if (menu_pressed && power_pressed) {
 			menu_pressed = power_pressed = 0;
-			system("shutdown");
-			while (1) pause();
+			while(1) {
+				execlp("shutdown", "shutdown", NULL);
+				pause(); // we will never reach here when execlp is successful
+			}
+			//system("shutdown");
+			//while (1) pause();
 		}
 	}
 	ERROR("Failed to read input event");

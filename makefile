@@ -137,6 +137,7 @@ payload:
 	cp ./third-party/picoarch/output/prboom_libretro.so ./build/EXTRAS/Emus/DOOM.pak/
 	cp ./third-party/picoarch/cores/prboom/prboom.wad ./build/EXTRAS/Bios/DOOM/
 	cp ./third-party/picoarch/output/nxengine_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Cave Story/"
+	cp ./third-party/picoarch/output/xrick_libretro.so "./build/EXTRAS/Roms/Native Games (SH)/Rick Dangerous/"
 	cp ./third-party/st-sdl/st ./build/EXTRAS/Tools/Terminal.pak/
 	cp ./third-party/dropbear-embedded/dropbear ./build/EXTRAS/Tools/SSH.pak/
 	cp ./third-party/vvvvvv/vvvvvv "./build/EXTRAS/Roms/Native Games (SH)/VVVVVV/"

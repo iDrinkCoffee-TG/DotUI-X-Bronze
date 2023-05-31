@@ -9,6 +9,7 @@ ifconfig lo up
 sleep 2
 ifconfig wlan0 up
 /customer/app/wpa_supplicant -B -D nl80211 -iwlan0 -c /appconfigs/wpa_supplicant.conf
+ln -sf /dev/null /tmp/udhcpc.log
 udhcpc -i wlan0 -s /etc/init.d/udhcpc.script > /dev/null 2>&1 &
 
 # Telnet

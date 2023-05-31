@@ -1,18 +1,2 @@
 #!/bin/sh
-
-# install
-if [ -d "/mnt/SDCARD/miyoo354" ] ; then
-	exit 0
-fi
-
-# or launch
-LAUNCH_PATH="/mnt/SDCARD/.system/paks/MiniUI.pak/launch.sh"
-if [ -f "$LAUNCH_PATH" ] ; then
-	"$LAUNCH_PATH"
-fi
-
-# something went terribly wrong
-while true ; do
-	reboot # under no circumstances should stock be allowed to touch this card
-	sleep 10
-done
+/mnt/SDCARD/.tmp_update/runtime.sh

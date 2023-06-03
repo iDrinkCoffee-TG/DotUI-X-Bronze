@@ -68,7 +68,8 @@
 //static int eased_charge = 0;
 //static int sar_fd = 0;
 static struct input_event	ev;
-static int	input_fd = 0;
+static int input_fd = 0;
+static int bat_fd = 0;
 static pthread_t adc_pt;
 
 int exists(const char* path) {
@@ -85,27 +86,24 @@ void quit(int exitcode) {
 
 	if (input_fd > 0) close(input_fd);
 	//if (sar_fd > 0) close(sar_fd);
+	if (bat_fd > 0) close(bat_fd);
 	exit(exitcode);
 }
 
 void checkAXP() {
 	// Code adapted from OnionOS
-	char *cmd = "cd /customer/app/ ; ./axp_test";  
-	int battery_number = 0;
-	int charge_number = 0;
-
+	const char *cmd = "cd /customer/app/ ; ./axp_test";
 	FILE *fp;
 	fp = popen(cmd, "r");
 	if (fp) {
+		int battery_number = 0;
+		int charge_number = 0;
 		if (fscanf(fp, "{\"battery\":%d, \"voltage\":%*d, \"charging\":%d}", &battery_number, &charge_number) == 2 &&
-			battery_number <= 100) {
-			int bat_fd = open("/tmp/battery", O_CREAT | O_WRONLY | O_TRUNC, 0777);
-			if (bat_fd>0) {
-				char value[4];
-				sprintf(value, "%d", battery_number);
-				write(bat_fd, value, (battery_number == 100 ? 3 : (battery_number >= 10 ? 2 : 1)));
-				close(bat_fd);
-			}
+				battery_number <= 100) {
+			char value[4];
+			sprintf(value, "%d", battery_number);
+			write(bat_fd, value, (battery_number == 100 ? 3 : (battery_number >= 10 ? 2 : 1)));
+			lseek(bat_fd, 0, 0);
 			if (exists("/tmp/charging")) {
 				if (charge_number != 3) {
 					unlink("/tmp/charging");
@@ -127,6 +125,8 @@ static void* runAXP(void *arg) {
 }
 
 int main (int argc, char *argv[]) {
+	bat_fd = open("/tmp/battery", O_CREAT | O_WRONLY | O_TRUNC, 0666);
+	if (bat_fd < 0) ERROR("Failed to open /tmp/battery");
 	checkAXP();
 	pthread_create(&adc_pt, NULL, &runAXP, NULL);
 
@@ -134,6 +134,7 @@ int main (int argc, char *argv[]) {
 	InitSettings();
 
 	input_fd = open("/dev/input/event0", O_RDONLY);
+	if (input_fd < 0) ERROR("Failed to open /dev/input/event0");
 
 	// Main Loop
 	register uint32_t val;

@@ -48,7 +48,7 @@ deps:
 	cd ./third-party/minizip && make miniunz
 
 sdl: lib
-	cd ./third-party/SDL-1.2 && ./make.sh
+	cd ./third-party/SDL-1.2 && MSETTINGS=1 ./make.sh
 
 core: lib
 	cd ./src/batmon && make

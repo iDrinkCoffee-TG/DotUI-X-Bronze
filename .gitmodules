@@ -4,8 +4,8 @@
 	branch = miniui-miyoomini
 [submodule "third-party/SDL-1.2"]
 	path = third-party/SDL-1.2
-	url = https://github.com/shauninman/SDL-1.2.git
-	branch = miniui-miyoomini
+	url = https://github.com/anzz1/SDL-1.2.git
+	branch = miyoomini
 [submodule "third-party/picoarch"]
 	path = third-party/picoarch
 	url = https://github.com/anzz1/picoarch.git

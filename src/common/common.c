@@ -836,7 +836,7 @@ int isCharging(void) {
 
 int isCharging_rt(void) {
 	// Code adapted from OnionOS
-	char *cmd = "cd /customer/app/ ; ./axp_test";  
+	const char *cmd = "cd /customer/app/ ; ./axp_test";
 	int charge_number = 0;
 
 	FILE *fp;

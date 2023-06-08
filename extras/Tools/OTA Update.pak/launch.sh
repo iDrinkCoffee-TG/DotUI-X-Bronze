@@ -68,7 +68,7 @@ progress 25 "Downloading update ..."
 BASE_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-base.zip"
 EXTRAS_URL="https://github.com/anzz1/DotUI-X/releases/download/$TAG/DotUI-X-$TAG-extras.zip"
 curl --silent -f --connect-timeout 30 -m 600 -L -k -o update-base.zip "$BASE_URL" && \
-zipvalid "update-base.zip" && 
+zipvalid "update-base.zip" && \
 progress 50 "Downloading update ..." && \
 curl --silent -f --connect-timeout 30 -m 600 -L -k -o update-extras.zip "$EXTRAS_URL" && \
 zipvalid "update-extras.zip"

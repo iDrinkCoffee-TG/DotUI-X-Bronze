@@ -898,6 +898,7 @@ void powerOff(void) {
 		SDL_FillRect(screen, NULL, 0);
 		GFX_blitBodyCopy(screen, msg, 0,0,Screen.width,Screen.height);
 		SDL_Flip(screen);
+		sync();
 		sleep(1);
 		while(1) {
 			execlp("shutdown", "shutdown", NULL);

@@ -18,6 +18,8 @@ build/
 nopes/
 releases/
 
+commits.txt
+
 # thanks I hate it
 batmon
 !batmon/

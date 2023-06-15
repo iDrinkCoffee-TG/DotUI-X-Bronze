@@ -348,4 +348,6 @@ int isWifiOn(void);
 int isWifiConnected(void);
 int getWifiState(void);
 
+char* getLocalIp(void);
+
 #endif

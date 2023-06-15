@@ -1554,7 +1554,6 @@ int main (int argc, char *argv[]) {
 	GFX_ready();
 	
 	SDL_Surface* logo = GFX_loadImage("logo.png");
-	SDL_Surface* version = NULL;
 	
 	Menu_init();
 	
@@ -1850,47 +1849,65 @@ int main (int argc, char *argv[]) {
 				wifi_state = lastWifiState;
 			}
 			GFX_blitRule(screen, Screen.main.rule.top_y);
-		
+
 			if (show_version) {
-				if (!version) {
-					char release[256];
-					getFile("./version.txt", release, 256);
-					
-					char *tmp,*commit;
-					commit = strrchr(release, '\n');
-					commit[0] = '\0';
-					commit = strrchr(release, '\n')+1;
-					tmp = strchr(release, '\n');
-					tmp[0] = '\0';
-					
-					SDL_Surface* release_txt = GFX_getText("Release", 2, 1);
-					SDL_Surface* version_txt = GFX_getText(release, 2, 0);
-					SDL_Surface* commit_txt = GFX_getText("Commit", 2, 1);
-					SDL_Surface* hash_txt = GFX_getText(commit, 2, 0);
-					
-					SDL_Surface* firmware_txt = GFX_getText("Firmware", 2, 1);
-					SDL_Surface* date_txt = GFX_getText(getenv("MIYOO_VERSION"), 2, 0);
-				
-					int x = firmware_txt->w + 12;
-					int w = x + version_txt->w;
-					int h = 96 * 2;
-					version = SDL_CreateRGBSurface(0,w,h,16,0,0,0,0);
-				
-					SDL_BlitSurface(release_txt, NULL, version, &(SDL_Rect){0, 0});
-					SDL_BlitSurface(version_txt, NULL, version, &(SDL_Rect){x,0});
-					SDL_BlitSurface(commit_txt, NULL, version, &(SDL_Rect){0,48});
-					SDL_BlitSurface(hash_txt, NULL, version, &(SDL_Rect){x,48});
-					SDL_BlitSurface(firmware_txt, NULL, version, &(SDL_Rect){0,144});
-					SDL_BlitSurface(date_txt, NULL, version, &(SDL_Rect){x,144});
-	
-					SDL_FreeSurface(release_txt);
-					SDL_FreeSurface(version_txt);
-					SDL_FreeSurface(commit_txt);
-					SDL_FreeSurface(hash_txt);
-					SDL_FreeSurface(firmware_txt);
-					SDL_FreeSurface(date_txt);
+				char release[256];
+				getFile("./version.txt", release, 256);
+
+				char *tmp,*commit;
+				commit = strrchr(release, '\n');
+				commit[0] = '\0';
+				commit = strrchr(release, '\n')+1;
+				tmp = strchr(release, '\n');
+				tmp[0] = '\0';
+
+				SDL_Surface* release_txt = GFX_getText("Release", 2, 1);
+				SDL_Surface* version_txt = GFX_getText(release, 2, 0);
+				SDL_Surface* commit_txt = GFX_getText("Commit", 2, 1);
+				SDL_Surface* hash_txt = GFX_getText(commit, 2, 0);
+
+				SDL_Surface* firmware_txt = GFX_getText("Firmware", 2, 1);
+				SDL_Surface* date_txt = GFX_getText(getenv("MIYOO_VERSION"), 2, 0);
+
+				int x = firmware_txt->w + 12;
+				int w = x + version_txt->w;
+				int h = 48 * 4;
+				int fw_y = 144;
+
+				SDL_Surface* ip_txt;
+				SDL_Surface* addr_txt;
+				char* ip = getLocalIp();
+				if (ip) {
+					ip_txt = GFX_getText("IP", 2, 1);
+					addr_txt = GFX_getText(ip, 2, 0);
+					h += 48;
+					fw_y -= 24;
 				}
+
+				SDL_Surface* version = SDL_CreateRGBSurface(0,w,h,16,0,0,0,0);
+
+				SDL_BlitSurface(release_txt, NULL, version, &(SDL_Rect){0, 0});
+				SDL_BlitSurface(version_txt, NULL, version, &(SDL_Rect){x,0});
+				SDL_BlitSurface(commit_txt, NULL, version, &(SDL_Rect){0,48});
+				SDL_BlitSurface(hash_txt, NULL, version, &(SDL_Rect){x,48});
+				SDL_BlitSurface(firmware_txt, NULL, version, &(SDL_Rect){0,fw_y});
+				SDL_BlitSurface(date_txt, NULL, version, &(SDL_Rect){x,fw_y});
+
+				if (ip) {
+					SDL_BlitSurface(ip_txt, NULL, version, &(SDL_Rect){0,192});
+					SDL_BlitSurface(addr_txt, NULL, version, &(SDL_Rect){x,192});
+					SDL_FreeSurface(ip_txt);
+					SDL_FreeSurface(addr_txt);
+				}
+
+				SDL_FreeSurface(release_txt);
+				SDL_FreeSurface(version_txt);
+				SDL_FreeSurface(commit_txt);
+				SDL_FreeSurface(hash_txt);
+				SDL_FreeSurface(firmware_txt);
+				SDL_FreeSurface(date_txt);
 				SDL_BlitSurface(version, NULL, screen, &(SDL_Rect){(640-version->w)/2,(480-version->h)/2});
+				SDL_FreeSurface(version);
 			}
 			else {
 				if (total>0) {
@@ -1951,7 +1968,6 @@ int main (int argc, char *argv[]) {
 	SDL_Flip(screen);
 
 	SDL_FreeSurface(logo);
-	if (version) SDL_FreeSurface(version);
 
 	Menu_quit();
 	GFX_quit();

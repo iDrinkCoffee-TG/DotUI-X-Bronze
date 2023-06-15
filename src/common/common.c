@@ -934,8 +934,8 @@ int getWifiState(void) {
 	return lastWifiState;
 }
 
-#if 0 // To be used later
-int getLocalIp(char* ip) {
+char local_ip[16];
+char* getLocalIp(void) {
 	const char ifname[IFNAMSIZ - 1] = "wlan0";
 	int fd, n;
 	struct ifreq ifr;
@@ -945,10 +945,9 @@ int getLocalIp(char* ip) {
 	n = ioctl(fd, SIOCGIFADDR, &ifr);
 	close(fd);
 	if (n) {
-		strcpy(ip, "127.0.0.1");
+		local_ip[0] = 0;
 		return 0;
 	}
-	strcpy(ip, inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
-	return 1;
+	strcpy(local_ip, inet_ntoa(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr));
+	return local_ip;
 }
-#endif

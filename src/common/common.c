@@ -294,7 +294,7 @@ int exactMatch(char* str1, char* str2) {
 	return !strcmp(str1, str2);
 }
 int hide(char* file_name) {
-	return (file_name[0]=='.' || suffixMatch(".sbi", file_name));
+	return (file_name[0]=='.' || file_name[0]=='_' || suffixMatch(".sbi", file_name));
 }
 
 void getDisplayName(const char* in_name, char* out_name) {

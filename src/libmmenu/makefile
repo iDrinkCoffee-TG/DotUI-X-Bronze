@@ -1,4 +1,4 @@
-.PHONY: build
+.PHONY: all
 .PHONY: clean
 
 TARGET=mmenu
@@ -20,32 +20,35 @@ endif
 
 ###########################################################
 
+ifeq ($(DEBUG), 1)
+	CFLAGS = -ggdb3 -Og -DDEBUG
+else
+	CFLAGS = -Os -DNDEBUG
+	ifneq ($(PROFILE), 1)
+		CFLAGS += -fdata-sections -ffunction-sections -Wl,--gc-sections -s
+	endif
+endif
+
 CC = $(CROSS_COMPILE)gcc
-
-SYSROOT     := $(shell $(CC) --print-sysroot)
-
+SYSROOT := $(shell $(CC) --print-sysroot)
 INCLUDEDIR = $(SYSROOT)/usr/include
-CFLAGS = -I$(INCLUDEDIR) -I. -I../common -DPLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z) -std=gnu99
-LDFLAGS = -s -lSDL -lSDL_image -lSDL_ttf -lz -lm -Wl,--no-as-needed -ldl -lrt
+LIBS = -lSDL -lSDL_image -lSDL_ttf -lz -lm -ldl -lrt
 
-CFLAGS += -ggdb3 -Og
+CFLAGS += -Wall -marm -march=armv7ve+simd -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+CFLAGS += -flto -fipa-pta -fipa-ra -ftree-vectorize -ffast-math -funsafe-math-optimizations
+CFLAGS += -fno-math-errno -fno-unwind-tables -fno-asynchronous-unwind-tables
+CFLAGS += -I$(INCLUDEDIR) -I. -I../common -DPLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z) -std=gnu99
+CFLAGS += -Wl,--no-as-needed
+LDFLAGS = $(CFLAGS) $(LIBS)
 
-ifeq (trimui,$(PLATFORM))
-LDFLAGS += -ltinyalsa
-endif
-ifeq (rs90,$(PLATFORM))
-LDFLAGS += -lasound
-endif
-
-OPTM=-Ofast
-
-build:
-	$(CC) -c -Werror -fpic $(TARGET).c ../common/common.c $(CFLAGS) $(LDFLAGS) $(OPTM)
-	$(CC) -shared -o lib$(TARGET).so $(TARGET).o common.o
+all:
+	$(CC) -c -fpic $(TARGET).c ../common/common.c $(CFLAGS)
+	$(CC) -shared -o lib$(TARGET).so $(TARGET).o common.o $(LDFLAGS)
 	cp $(TARGET).h $(PREFIX)/include
 	cp lib$(TARGET).so $(PREFIX)/lib
+
 clean:
-	rm -f *.o
+	rm -f $(TARGET).o common.o
 	rm -f lib$(TARGET).so
 	rm -f $(PREFIX)/include/$(TARGET).h
 	rm -f $(PREFIX)/lib/lib$(TARGET).so

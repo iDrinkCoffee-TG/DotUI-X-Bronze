@@ -1,12 +1,13 @@
-.PHONY: build
+.PHONY: all
 .PHONY: clean
-	
+
+TARGET=progressui
+
 ###########################################################
 
 ifeq (,$(PLATFORM))
 PLATFORM=$(UNION_PLATFORM)
 endif
-
 ifeq (,$(PLATFORM))
 $(error please specify PLATFORM, eg. make PLATFORM=trimui)
 endif
@@ -16,14 +17,28 @@ endif
 
 ###########################################################
 
+ifeq ($(DEBUG), 1)
+	CFLAGS = -ggdb3 -Og -DDEBUG
+else
+	CFLAGS = -Os -DNDEBUG
+	ifneq ($(PROFILE), 1)
+		CFLAGS += -fdata-sections -ffunction-sections -Wl,--gc-sections -s
+	endif
+endif
+
 CC = $(CROSS_COMPILE)gcc
 SYSROOT := $(shell $(CC) --print-sysroot)
 INCLUDEDIR = $(SYSROOT)/usr/include
-CFLAGS = -I$(INCLUDEDIR) -I. -I../common -DPLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z) -std=gnu99
-LDFLAGS = -s -lSDL -lSDL_image -lSDL_ttf -lmsettings -lpthread -lrt -lz -lm
-OPTM=-O3
+LIBS = -lSDL -lSDL_image -lSDL_ttf -lmsettings -lz -lm -ldl -lrt -lpthread
 
-build:
-	$(CC) -o progressui main.c ../common/common.c $(CFLAGS) $(LDFLAGS) $(OPTM) -ldl -rdynamic
+CFLAGS += -Wall -marm -march=armv7ve+simd -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+CFLAGS += -flto -fipa-pta -fipa-ra -ftree-vectorize -ffast-math -funsafe-math-optimizations
+CFLAGS += -fno-math-errno -fno-unwind-tables -fno-asynchronous-unwind-tables
+CFLAGS += -I$(INCLUDEDIR) -I. -I../common -DPLATFORM_$(shell echo $(PLATFORM) | tr a-z A-Z) -std=gnu99
+CFLAGS += $(LIBS) -rdynamic
+
+all:
+	$(CC) -o $(TARGET) main.c ../common/common.c $(CFLAGS)
+
 clean:
-	rm -f progressui
+	rm -f $(TARGET)

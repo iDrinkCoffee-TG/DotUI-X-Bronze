@@ -522,6 +522,7 @@ int GFX_blitHint(SDL_Surface* surface, char* htxt, int x, int y) {
 	SDL_Surface* hint_text = TTF_RenderUTF8_Blended(font_m, htxt, white);
 	SDL_BlitSurface(hint_text, NULL, surface, &(SDL_Rect){x,y});
 	SDL_FreeSurface(hint_text);
+	return hint_text->w;
 }
 int GFX_blitPill(SDL_Surface* surface, char* btxt, char* htxt, int x, int y) {
 	SDL_Surface* button_text = TTF_RenderUTF8_Blended(font_s, btxt, bronze);

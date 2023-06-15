@@ -1,14 +1,35 @@
+.PHONY: all
+.PHONY: clean
+
+TARGET=batmon
+
+###########################################################
+
 ifeq (,$(CROSS_COMPILE))
 $(error missing CROSS_COMPILE for this toolchain)
 endif
 
-TARGET = batmon
+###########################################################
+
+ifeq ($(DEBUG), 1)
+	CFLAGS = -ggdb3 -Og -DDEBUG
+else
+	CFLAGS = -Os -DNDEBUG
+	ifneq ($(PROFILE), 1)
+		CFLAGS += -fdata-sections -ffunction-sections -Wl,--gc-sections -s
+	endif
+endif
 
 CC = $(CROSS_COMPILE)gcc
-CFLAGS   = -marm -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -march=armv7ve 
-LDFLAGS	 = -lSDL -lSDL_image -lpthread
+LIBS = -lSDL -lSDL_image -lpthread
+
+CFLAGS += -Wall -marm -march=armv7ve+simd -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
+CFLAGS += -flto -fipa-pta -fipa-ra -ftree-vectorize -ffast-math -funsafe-math-optimizations
+CFLAGS += -fno-math-errno -fno-unwind-tables -fno-asynchronous-unwind-tables -std=gnu99
+CFLAGS += $(LIBS)
 
 all:
-	$(CC) $(TARGET).c -o $(TARGET) $(CFLAGS) $(LDFLAGS)
+	$(CC) $(TARGET).c -o $(TARGET) $(CFLAGS)
+
 clean:
 	rm -f $(TARGET)

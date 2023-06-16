@@ -1,6 +1,13 @@
 #!/bin/sh
 
+killapps
 if [ ! -z "$DATETIME_PATH" ]; then
 	date -u +%s > "$DATETIME_PATH"
 fi
-sync && poweroff && sleep 10
+sync
+umount -r /mnt/SDCARD
+while true; do
+	sync
+	poweroff
+	sleep 10
+done

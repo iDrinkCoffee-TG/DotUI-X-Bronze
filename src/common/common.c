@@ -895,16 +895,20 @@ int preventAutosleep(void) {
 
 void powerOff(void) {
 	if (can_poweroff) {
+		putenv("SDL_FBCON_DONT_CLEAR=1");
 		char* msg = exists(kAutoResumePath) ? "Quicksave created,\npowering off" : "Powering off";
 		SDL_FillRect(screen, NULL, 0);
 		GFX_blitBodyCopy(screen, msg, 0,0,Screen.width,Screen.height);
 		SDL_Flip(screen);
+		SDL_Quit();
+		unlink("/tmp/miniui_exec");
 		sync();
 		sleep(1);
-		while(1) {
-			execlp("shutdown", "shutdown", NULL);
-			pause(); // we will never reach here when execlp is successful
-		}
+		exit(0);
+		//while(1) {
+		//	execlp("shutdown", "shutdown", NULL);
+		//	pause(); // we will never reach here when execlp is successful
+		//}
 		//system("shutdown");
 		//while (1) pause();
 	}

@@ -1,13 +1,43 @@
 #!/bin/sh
 
-killapps
+fatality() {
+	c=0
+	while [ $c -lt 5 ]; do
+		pid=
+		for pid in $(fuser -m /mnt/SDCARD); do
+			if [ "$pid" != "$$" ]; then
+				kill $1 $pid
+			fi
+		done
+		test -z "$pid" && return
+		sleep 0.1
+		c=$((c+1))
+	done
+}
+
+if [ "$0" = "/tmp/_shutdown" ]; then
+	killall telnetd ftpd tcpsvd
+	fatality
+	sync
+	umount -r /mnt/SDCARD
+	fatality -9
+	sync
+	umount /mnt/SDCARD
+	while true; do
+		sync
+		poweroff
+		sleep 10
+	done
+fi
+export LD_PRELOAD=
+export LD_LIBRARY_PATH=/lib
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 if [ ! -z "$DATETIME_PATH" ]; then
 	date -u +%s > "$DATETIME_PATH"
 fi
-sync
-umount -r /mnt/SDCARD
+rm -f /tmp/miniui_exec && sync
+test -f /tmp/_shutdown || cp -f /mnt/SDCARD/.system/bin/shutdown /tmp/_shutdown
+pgrep -f /tmp/_shutdown || (set -m; /tmp/_shutdown </dev/null >/dev/null 2>&1 &) 
 while true; do
-	sync
-	poweroff
-	sleep 10
+	sleep 10;
 done

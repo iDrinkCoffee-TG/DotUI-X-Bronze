@@ -1,22 +1,23 @@
 #!/bin/sh
 
 flawless_victory() {
+	r=0
 	for p in $1; do
-		if [ -d "/proc/$p" ]; then
-			return 1
+		if [ -d "/proc/$p" ] && [ $p -ne $$ ]; then
+			kill $2 $p
+			r=1
 		fi
 	done
-	return 0
+	return $r
 }
 
 fatality() {
 	c=0
 	while [ $c -lt 5 ]; do
-		pids=$(fuser -m /mnt/SDCARD | sed -r "s/\b$$\b//g")
-		if flawless_victory "$pids"; then
+		pids=$(fuser -m /mnt/SDCARD)
+		if flawless_victory "$pids" $1; then
 			return
 		fi
-		kill $1 $pids
 		sleep 0.1
 		c=$((c+1))
 	done

@@ -111,6 +111,7 @@ progress 100 "Rebooting ..."
 sleep 2
 progress quit
 
+shutdown -r
 while true; do
 	sync && reboot && sleep 10
 done

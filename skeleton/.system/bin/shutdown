@@ -24,17 +24,21 @@ fatality() {
 }
 
 if [ "$0" = "/tmp/_shutdown" ]; then
-	killall telnetd ftpd tcpsvd main updater runtime.sh launch.sh
+	killall telnetd ftpd tcpsvd main keymon MainUI updater runtime.sh launch.sh
 	fatality
 	sync
 	umount -r /mnt/SDCARD
-	killall -9 telnetd ftpd tcpsvd main updater runtime.sh launch.sh
+	killall -9 telnetd ftpd tcpsvd main keymon MainUI updater runtime.sh launch.sh
 	fatality -9
 	sync
 	umount /mnt/SDCARD
 	while true; do
 		sync
-		poweroff
+		if [ "$1" = "-r" ]; then
+			reboot
+		else
+			poweroff
+		fi
 		sleep 10
 	done
 fi
@@ -44,12 +48,12 @@ export PATH=/bin:/sbin:/usr/bin:/usr/sbin
 if [ ! -z "$DATETIME_PATH" ]; then
 	date -u +%s > "$DATETIME_PATH"
 fi
-rm -f /tmp/miniui_exec
+rm -f /tmp/miniui_exec /tmp/next
 sync
 if [ ! -f /tmp/_shutdown ]; then
 	cp -f /mnt/SDCARD/.system/bin/shutdown /tmp/_shutdown
 fi
-pgrep -f /tmp/_shutdown || (set -m; /tmp/_shutdown </dev/null >/dev/null 2>&1 &) 
+pgrep -f /tmp/_shutdown || (set -m; /tmp/_shutdown $1 </dev/null >/dev/null 2>&1 &) 
 while true; do
 	sleep 10
 done

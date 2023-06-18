@@ -115,4 +115,6 @@ while [ -f "$EXEC_PATH" ]; do
 done
 
 shutdown
-poweroff # just in case
+while true; do
+	sync && poweroff && sleep 10
+done

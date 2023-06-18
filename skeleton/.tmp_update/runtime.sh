@@ -14,6 +14,5 @@ if [ -f "$LAUNCH_PATH" ]; then
 fi
 
 while true; do
-	reboot
-	sleep 10
+	sync && reboot && sleep 10
 done

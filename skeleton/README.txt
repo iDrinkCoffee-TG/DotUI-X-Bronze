@@ -44,15 +44,17 @@ To install an update copy just the "miyoo354" folder to the root of your SD card
 ----------------------------------------
 Shortcuts
 
-Reduce/increase brightness:
-START + L or R
+Increase brightness:
+MENU + Volume Up
 
-Reduce/increase volume:
-Volume Buttons
-(To show volume level, hold SELECT in menus)
+Decrease brightness:
+MENU + Volume Down
 
-Force power off (in case of hangs):
+Force power off (SOFT):
 MENU + POWER
+
+Force power off (HARD):
+Hold POWER for 10 seconds
 
 ----------------------------------------
 Roms

@@ -46,6 +46,7 @@ fi
 export LD_PRELOAD=
 export LD_LIBRARY_PATH=/lib
 export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+export HOME=/
 if [ ! -z "$DATETIME_PATH" ]; then
 	date -u +%s > "$DATETIME_PATH"
 fi

@@ -42,7 +42,8 @@ if [ -f /customer/lib/libpadsp.so ]; then
 	export LD_PRELOAD=libpadsp.so
 fi
 
-lumon & # adjust lcd luma and saturation
+# adjust lcd luma and saturation
+# lumon & 
 
 CHARGING=`/customer/app/axp_test | awk -F'[,: {}]+' '{print $7}'`
 if [ "$CHARGING" == "3" ]; then

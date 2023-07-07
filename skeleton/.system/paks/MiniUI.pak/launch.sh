@@ -44,6 +44,8 @@ fi
 
 # adjust lcd luma and saturation
 # lumon & 
+# csc [dev] [cscMatrix] [contrast] [hue] [luma] [saturation] [sharpness] [gain]
+echo csc 0 3 50 50 45 45 0 0 > /proc/mi_modules/mi_disp/mi_disp0
 
 CHARGING=`/customer/app/axp_test | awk -F'[,: {}]+' '{print $7}'`
 if [ "$CHARGING" == "3" ]; then
